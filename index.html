@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1200">
+  <title>Meowtopia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Titan+One&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FFB7C5;
+      --green: #99C44D;
+      --dark: #463438;
+      --cream: #FFF9F0;
+      --blue: #5BA4CF;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--cream);
+      background-image: linear-gradient(45deg, #fce4ec 25%, transparent 25%, transparent 50%, #fce4ec 50%, #fce4ec 75%, transparent 75%, transparent);
+      background-size: 100px 100px;
+      color: var(--dark);
+    }
+    .page-shell {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 18px;
+    }
+    .game-title {
+      font-family: 'Titan One', cursive;
+      font-size: clamp(3.8rem, 9vw, 5.5rem);
+      color: white;
+      -webkit-text-stroke: 3px var(--dark);
+      text-shadow: 0 0 6px rgba(255, 133, 161, 0.7);
+      letter-spacing: 4px;
+      line-height: 0.95;
+      text-align: center;
+      animation: glow 2s ease-in-out infinite alternate;
+      margin-bottom: 34px;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 8px #FF85A1, 0 0 18px #FF85A1; transform: translateY(0); }
+      to { text-shadow: 0 0 18px #A3D36C, 0 0 30px #A3D36C; transform: translateY(10px); }
+    }
+    .hidden { display: none !important; }
+    .flip-card {
+      width: min(500px, 100%);
+      height: 560px;
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: 8px solid var(--dark);
+      border-radius: 35px;
+      background: rgba(255, 255, 255, 0.96);
+      overflow: hidden;
+    }
+    .flip-card-front {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 15px 15px 0 var(--pink);
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 15px 15px 0 var(--green);
+    }
+    .pass-header {
+      background: var(--pink);
+      padding: 20px;
+      border-bottom: 5px dashed var(--dark);
+      text-align: center;
+    }
+    .pass-header h2 {
+      color: white;
+      font-weight: 900;
+      font-size: 1.5rem;
+      text-shadow: 2px 2px 0 var(--dark);
+      letter-spacing: 1px;
+    }
+    .pass-body {
+      padding: 30px 30px 70px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+    .flip-card-back .input-box-group { margin-bottom: 16px; }
+    .flip-card-back #btn-reg { margin-top: 6px !important; }
+    .flip-card-back .switch-link { margin-top: 10px !important; }
+    .card-heading {
+      font-weight: 900;
+      font-style: italic;
+      font-size: 2.2rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+      color: var(--dark);
+    }
+    .input-box-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      border: 4px solid var(--dark);
+      border-radius: 15px;
+      overflow: hidden;
+      background: white;
+      transition: all 0.2s;
+    }
+    .input-box-group:focus-within {
+      border-color: var(--green);
+      transform: scale(1.02);
+    }
+    .side-label {
+      background: var(--dark);
+      color: white;
+      padding: 14px 12px;
+      font-size: 16px;
+      font-weight: 900;
+      min-width: 120px;
+      text-align: center;
+      white-space: nowrap;
+      clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
+      margin-right: -10px;
+      padding-right: 35px;
+      flex-shrink: 0;
+    }
+    .label-green { background: var(--green); }
+    .label-pink { background: var(--pink); }
+    .game-input {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--dark);
+      min-width: 0;
+    }
+    .photo-input {
+      padding-top: 14px;
+      padding-bottom: 14px;
+      font-size: 0.85rem;
+    }
+    .game-btn {
+      cursor: pointer;
+      border: 5px solid var(--dark);
+      border-radius: 60px;
+      padding: 12px;
+      font-size: 26px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 0 var(--dark);
+      box-shadow: 0 6px 0 var(--dark);
+      position: relative;
+      transition: transform 0.15s, box-shadow 0.15s, top 0.1s;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .game-btn:not(:disabled):hover {
+      transform: translateY(-5px) scale(1.03);
+      box-shadow: 0 11px 0 var(--dark);
+    }
+    .game-btn:active {
+      top: 4px;
+      box-shadow: 0 2px 0 var(--dark);
+      transform: translateY(0);
+    }
+    .game-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .btn-red { background: var(--pink); }
+    .btn-green { background: var(--green); }
+    .btn-blue { background: var(--blue); }
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 15px;
+    }
+    .switch-link {
+      font-size: 14px;
+      font-weight: bold;
+      text-decoration: underline;
+      cursor: pointer;
+      color: var(--dark);
+      text-align: center;
+    }
+    .stamp {
+      position: absolute;
+      bottom: 58px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(-15deg);
+      color: var(--green);
+      font-weight: 900;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    #meow-map {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 700px;
+    }
+    .player-bar {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      border: 5px solid var(--dark);
+      border-radius: 20px;
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 10px 10px 0 var(--pink);
+    }
+    .player-side {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .quantum-stars {
+      min-width: 128px;
+      border: 4px solid var(--dark);
+      border-radius: 16px;
+      background: var(--cream);
+      padding: 8px 10px;
+      text-align: center;
+      box-shadow: 0 4px 0 rgba(70, 52, 56, 0.16);
+    }
+    .quantum-stars-label {
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--blue);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .star-icons {
+      color: #FFB800;
+      font-size: 24px;
+      line-height: 1.1;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0 var(--dark);
+    }
+    .mini-btn {
+      width: auto;
+      min-width: 76px;
+      padding: 7px 16px;
+      font-size: 14px;
+      border-width: 4px;
+      box-shadow: 0 4px 0 var(--dark);
+    }
+    .mini-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 7px 0 var(--dark);
+    }
+    .player-avatar {
+      width: 92px;
+      height: 92px;
+      background: var(--cream);
+      border: 5px solid var(--dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 900;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .player-avatar img,
+    .profile-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform-origin: center;
+    }
+    .map-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+      padding: 20px;
+      justify-items: center;
+      align-items: center;
+    }
+    .map-switcher { display: flex; justify-content: center; gap: 12px; margin: 4px 0 2px; }
+    .map-tab { min-width: 150px; border: 4px solid var(--dark); border-radius: 18px; padding: 9px 18px; background: white; color: var(--dark); font-weight: 900; cursor: pointer; box-shadow: 0 4px 0 var(--dark); transition: transform 0.15s, background 0.15s; }
+    .map-tab:hover:not(.locked) { transform: translateY(-2px); }
+    .map-tab.active { background: var(--green); color: white; text-shadow: 1px 1px 0 var(--dark); }
+    .map-tab.locked { background: #eee; color: #999; border-color: #aaa; box-shadow: 0 4px 0 #aaa; }
+    .map-title { margin: 12px 0 0; font-size: 22px; font-weight: 900; color: var(--dark); text-align: center; }
+    .level-node {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border: 5px solid var(--dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+      box-shadow: 0 6px 0 var(--green);
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: var(--dark);
+    }
+    .level-node:hover:not(.locked) {
+      transform: rotate(5deg) scale(1.1);
+      background: var(--pink);
+      color: white;
+    }
+    .level-node.locked {
+      background: #eee;
+      color: #bbb;
+      cursor: not-allowed;
+      box-shadow: 0 6px 0 #ccc;
+      border-color: #ccc;
+      opacity: 1;
+    }
+    .level-node.locked:hover {
+      transform: none;
+    }
+    .level-node.certificate-node.locked {
+      background: #bcd7e8;
+      color: #eef6fb;
+      border-color: #8fb3c7;
+      box-shadow: 0 6px 0 #8fb3c7;
+      text-shadow: 1px 1px 0 rgba(70, 52, 56, 0.35);
+    }
+    .level-node.checkpoint-node {
+      width: 76px;
+      height: 76px;
+      flex-direction: column;
+      gap: 2px;
+      border-radius: 20px;
+      background: #fff7d7;
+      box-shadow: 0 5px 0 #FFB800;
+      font-size: 14px;
+      line-height: 1.05;
+      text-align: center;
+      padding: 6px;
+    }
+    .level-node.checkpoint-node .node-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .level-node.checkpoint-node .node-icon svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .level-node.checkpoint-node.completed {
+      background: #fff2b0;
+      border-color: var(--dark);
+    }
+    .level-node.checkpoint-node.crown-node {
+      background: #eef4ff;
+      box-shadow: 0 5px 0 var(--blue);
+    }
+    .level-node.checkpoint-node.crown-node.completed {
+      background: #e2edff;
+    }
+    .level-node.checkpoint-node.locked {
+      box-shadow: 0 5px 0 #ccc;
+    }
+    .level-node.checkpoint-node.crown-node.locked {
+      box-shadow: 0 5px 0 #ccc;
+    }
+    .level-node.certificate-node {
+      grid-column: span 2;
+      width: 220px;
+      border-radius: 24px;
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 6px 0 var(--dark);
+      font-size: 24px;
+      font-weight: 900;
+      text-shadow: 1px 1px 0 var(--dark);
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(70, 52, 56, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 10000;
+    }
+    .profile-modal {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255, 255, 255, 0.98);
+      border: 7px solid var(--dark);
+      border-radius: 28px;
+      box-shadow: 14px 14px 0 var(--dark);
+      padding: 30px;
+    }
+    .profile-modal h2 {
+      font-size: 1.7rem;
+      font-weight: 900;
+      margin-bottom: 18px;
+      color: var(--dark);
+    }
+    .profile-modal .input-box-group {
+      margin-bottom: 14px;
+    }
+    .profile-modal .side-label {
+      padding: 12px 12px;
+      font-size: 14px;
+      min-width: 110px;
+      padding-right: 32px;
+    }
+    .profile-modal .game-input {
+      padding: 9px 14px;
+      font-size: 16px;
+    }
+    .profile-preview {
+      width: 132px;
+      height: 132px;
+      border: 6px solid var(--dark);
+      border-radius: 50%;
+      background: var(--cream);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-size: 3rem;
+      margin: 0 auto 18px;
+    }
+    .photo-controls {
+      display: grid;
+      gap: 12px;
+      margin: -4px 0 18px;
+    }
+    .photo-controls label {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: var(--dark);
+    }
+    .photo-controls input { accent-color: var(--green); }
+
+    /* 復盤超立方體平滑移動動畫 */
+    .replay-fish-animated {
+      transition: left 0.4s cubic-bezier(0.34, 1.3, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+      will-change: left, top;
+    }
+
+    @media (max-width: 760px) {
+      .page-shell { justify-content: flex-start; padding-top: 34px; }
+      .game-title { margin-bottom: 26px; }
+      .flip-card { height: 590px; }
+      .flip-card-front { padding: 30px 22px; }
+      .pass-body { padding: 26px 22px 78px; }
+      .flip-card-back .input-box-group { margin-bottom: 14px; }
+      .stamp { bottom: 62px; }
+      .side-label { min-width: 100px; font-size: 14px; padding-right: 28px; }
+      .game-input { font-size: 16px; }
+      .switch-row { flex-direction: column; gap: 10px; }
+      .player-bar { flex-direction: column; gap: 16px; align-items: stretch; }
+      .player-side { justify-content: space-between; }
+      .map-container { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+      .level-node { width: 88px; height: 88px; }
+      .level-node.checkpoint-node { width: 68px; height: 68px; }
+      .level-node.certificate-node { grid-column: span 3; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <h1 class="game-title">MEOWTOPIA</h1>
+    <div class="flip-card" id="auth-card">
+      <div class="flip-card-inner">
+        <section class="flip-card-front">
+          <div class="flex-grow flex flex-col justify-center">
+            <h2 class="card-heading">LOGIN_</h2>
+            <div class="input-box-group">
+              <div class="side-label">NAME</div>
+              <input type="text" id="login-user" class="game-input" placeholder="Your name..." autocomplete="username">
+            </div>
+            <div class="input-box-group">
+              <div class="side-label label-green">PASS</div>
+              <input type="password" id="login-pass" class="game-input" placeholder="Password" autocomplete="current-password">
+            </div>
+          </div>
+          <button id="btn-login" onclick="handleLogin()" class="game-btn btn-red w-full">START!</button>
+          <div class="switch-row">
+            <p class="switch-link" onclick="handleGuestLogin()">Just visiting? Guest</p>
+            <p class="switch-link" onclick="toggleAuth()">New cat? Register</p>
+          </div>
+        </section>
+        <section class="flip-card-back">
+          <div class="pass-header"><h2>ADVENTURE PASS</h2></div>
+          <div class="pass-body">
+            <div class="stamp">APPROVED</div>
+            <div class="input-box-group">
+              <div class="side-label label-pink">IDENTITY</div>
+              <input type="text" id="reg-user" class="game-input" placeholder="Name your cat" autocomplete="username">
+            </div>
+            <div class="input-box-group">
+              <div class="side-label">SECRET</div>
+              <input type="password" id="reg-pass" class="game-input" placeholder="Enter password" autocomplete="new-password">
+            </div>
+            <div class="input-box-group">
+              <div class="side-label">CONFIRM</div>
+              <input type="password" id="reg-confirm" class="game-input" placeholder="Repeat password" autocomplete="new-password">
+            </div>
+            <div class="input-box-group">
+              <div class="side-label label-green">PHOTO</div>
+              <input type="file" id="reg-photo" class="game-input photo-input" accept="image/*">
+            </div>
+            <button id="btn-reg" onclick="handleRegister()" class="game-btn btn-green w-full mt-4">JOIN NOW!</button>
+            <p class="switch-link mt-4" onclick="toggleAuth()">Go back to login</p>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div id="meow-map" class="hidden">
+      <div class="player-bar mb-5">
+        <div class="flex items-center gap-4">
+          <div id="meow-player-avatar" class="player-avatar">🐱</div>
+          <div>
+            <div id="meow-display-username" class="text-2xl font-black">User</div>
+            <div class="text-sm font-bold text-gray-400 uppercase tracking-widest">Cat Explorer</div>
+          </div>
+        </div>
+        <div class="player-side">
+          <button id="edit-profile-btn" onclick="openProfileEditor()" class="game-btn btn-blue mini-btn">EDIT</button>
+          <div class="quantum-stars" aria-label="Quantum Stars">
+            <div class="quantum-stars-label">Quantum Stars</div>
+            <div id="quantum-stars" class="star-icons">★ ★ ★</div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm font-black" style="color:#99C44D">PROGRESS</div>
+            <div id="meow-display-level" class="text-4xl font-black">LV. 1</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-switcher" aria-label="Choose map">
+        <button id="map1-tab" class="map-tab active" onclick="selectMap(1)">MAP 1</button>
+        <button id="map2-tab" class="map-tab locked" onclick="selectMap(2)">MAP 2 🔒</button>
+      </div>
+      <div id="map-title" class="map-title">MAP 1 · QUANTUM BASICS</div>
+      <div class="map-container" id="level-grid"></div>
+      <div class="flex justify-center gap-4 mt-4">
+        <button onclick="openReplayLibrary()" class="game-btn btn-green px-8" style="font-size:18px">MY REPLAYS</button>
+        <button onclick="playPopThen(() => location.href='https://youtu.be/e55u71mLU1Y')" class="game-btn btn-blue px-10" style="font-size:18px">VIDEO</button>
+        <button onclick="playPopThen(handleLogout)" class="game-btn btn-red px-10" style="font-size:18px">LOGOUT</button>
+        <button onclick="playPopThen(() => location.href='lab2.html')" class="game-btn btn-green px-10" style="font-size:18px">LAB</button>
+      </div>
+    </div>
+    
+    <!-- 復盤列表與播放器彈窗 (固定高度避免滾動) -->
+    <div id="replay-library" class="hidden fixed inset-0 z-[5000] bg-black/50 items-center justify-center p-4">
+      <div class="bg-white border-4 border-[#463438] rounded-3xl p-6 w-full max-w-4xl h-[90vh] flex flex-col shadow-xl">
+        <div class="flex justify-between items-center mb-4 shrink-0">
+          <h2 class="text-2xl font-black">MY REPLAYS</h2>
+          <button onclick="closeReplayLibrary()" class="game-btn btn-red px-4 py-1 text-lg">CLOSE</button>
+        </div>
+        
+        <!-- List View (列表模式) -->
+        <div id="replay-list-view" class="flex-1 overflow-y-auto pr-2">
+          <div id="replay-list" class="grid gap-3"><p class="text-center text-gray-500 font-bold">Loading replays...</p></div>
+        </div>
+        
+        <!-- Player View (播放模式) -->
+        <div id="replay-player-view" class="hidden flex-1 flex-col">
+          <div class="flex justify-between items-center mb-2 shrink-0">
+            <button onclick="backToReplayList()" class="game-btn btn-blue px-3 py-1 text-sm min-w-[120px]">◀ BACK</button>
+            <div id="replay-title" class="font-black text-xl text-center flex-grow"></div>
+            <div class="min-w-[120px]"></div> <!-- 留空維持標題置中 -->
+          </div>
+          
+          <!-- 重播畫布 -->
+          <div id="replay-board" class="relative w-full max-w-[850px] mx-auto flex-1 bg-[#fffaf5] border-4 border-[#463438] rounded-2xl overflow-hidden mt-1 shadow-inner" aria-label="Replay board"></div>
+          
+          <!-- 下方控制列 -->
+          <div class="flex items-center justify-center gap-4 mt-4 shrink-0">
+            <button onclick="replayPrevious()" class="game-btn btn-blue px-5 py-1">◀</button>
+            <button id="replay-play-btn" onclick="toggleReplayPlayback()" class="game-btn btn-green px-6 py-1 min-w-[110px]">PLAY</button>
+            <button onclick="replayNext()" class="game-btn btn-blue px-5 py-1">▶</button>
+            <div class="bg-white border-4 border-[#463438] rounded-full px-4 py-2 min-w-[90px] text-center shadow-sm">
+              <span id="replay-counter" class="font-black text-xl text-[#463438]"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <div id="profile-modal" class="modal-overlay hidden">
+    <div class="profile-modal">
+      <h2>EDIT PROFILE_</h2>
+      <div id="edit-photo-preview" class="profile-preview">🐱</div>
+      <div class="photo-controls">
+        <label for="edit-photo-x">X POS<input type="range" id="edit-photo-x" min="0" max="100" value="50"></label>
+        <label for="edit-photo-y">Y POS<input type="range" id="edit-photo-y" min="0" max="100" value="50"></label>
+        <label for="edit-photo-scale">ZOOM<input type="range" id="edit-photo-scale" min="1" max="2.5" step="0.05" value="1"></label>
+      </div>
+      <div class="input-box-group">
+        <div class="side-label">NAME</div>
+        <input type="text" id="edit-user" class="game-input" placeholder="Your name...">
+      </div>
+      <div class="input-box-group">
+        <div class="side-label">PASS</div>
+        <input type="password" id="edit-pass" class="game-input" placeholder="New password">
+      </div>
+      <div class="input-box-group">
+        <div class="side-label">CONFIRM</div>
+        <input type="password" id="edit-confirm" class="game-input" placeholder="Repeat new password">
+      </div>
+      <div class="input-box-group">
+        <div class="side-label">PHOTO</div>
+        <input type="file" id="edit-photo" class="game-input photo-input" accept="image/*">
+      </div>
+      <div class="flex gap-3 mt-5">
+        <button id="btn-profile-save" onclick="handleProfileSave()" class="game-btn btn-green w-full" style="font-size:18px;">SAVE</button>
+        <button onclick="closeProfileEditor()" class="game-btn btn-red w-full" style="font-size:18px;">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzAwPg4Bf5V2sZ-E-wmstI3FBHwlynIlMLStQwlbs9cbJY2Zof_PTZZHRa43ob26SbiPw/exec';
+    const PHOTO_KEY = 'playerPhoto';
+    const PHOTO_X_KEY = 'playerPhotoX';
+    const PHOTO_Y_KEY = 'playerPhotoY';
+    const PHOTO_SCALE_KEY = 'playerPhotoScale';
+    const GUEST_KEY = 'isGuest';
+    const STAR_KEYS = ['cp1', 'cp2', 'cp3', 'cp4'];
+    const METER_STAR_KEYS = ['cp1', 'cp2', 'cp3'];
+    let activeMap = 1;
+    let mapQueryApplied = false;
+    function homeMapKey(username = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest') {
+      return `meowtopiaHomeMap_${String(username).trim().toLowerCase()}`;
+    }
+    function rememberHomeMap(mapNumber, username = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest') {
+      const map = mapNumber === 2 ? '2' : '1';
+      localStorage.setItem(homeMapKey(username), map);
+      localStorage.setItem('meowtopiaHomeMap', map);
+    }
+
+    function starIconSVG(earned) {
+      const fill = earned ? '#FFC400' : '#FFE9AE';
+      const opacity = earned ? '1' : '0.65';
+      return `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.5c.35 0 .66.21.79.53l2.3 5.53 5.96.5c.75.06 1.06.99.49 1.48l-4.53 3.93 1.38 5.82c.17.73-.62 1.31-1.27.92L12 17.98l-5.12 3.23c-.65.39-1.44-.19-1.27-.92l1.38-5.82L2.46 10.5c-.57-.49-.26-1.42.49-1.48l5.96-.5 2.3-5.53c.13-.32.44-.53.79-.53Z" fill="${fill}" fill-opacity="${opacity}" stroke="none" stroke-linejoin="round"/></svg>`;
+    }
+    function crownIconSVG(earned) {
+      const fill = earned ? '#FFC400' : '#D9E4F5';
+      const opacity = earned ? '1' : '0.75';
+      return `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 8.2c.83 0 1.5.67 1.5 1.5 0 .2-.04.39-.11.56l1.86 3.34 3.16-5.1a1.5 1.5 0 1 1 2.18 0l3.16 5.1 1.86-3.34a1.5 1.5 0 1 1 1.39.94l-1.98 6.6c-.13.43-.53.72-.98.72H6.46c-.45 0-.85-.29-.98-.72l-1.98-6.6a1.5 1.5 0 0 1-1-1.4c0-.83.67-1.5 1.5-1.5Z" fill="${fill}" fill-opacity="${opacity}" stroke="none" stroke-linejoin="round"/></svg>`;
+    }
+    const popAudio = new Audio('pop.m4a');
+    let pendingEditPhoto = '';
+    window.addEventListener('load', () => {
+      setupProfileEditor();
+      const user = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser');
+      const level = getStoredLevel();
+      if (user && !isNaN(level)) showMeowMap(user);
+      else showAuth();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Enter') return;
+      const active = document.activeElement;
+      if (!active || !active.closest('#auth-card')) return;
+      if (active.tagName === 'BUTTON') return;
+      event.preventDefault();
+      if (document.getElementById('auth-card').classList.contains('flipped')) {
+        handleRegister();
+      } else {
+        handleLogin();
+      }
+    });
+    document.addEventListener('click', event => {
+      if (event.target.closest('.level-node:not(.locked)')) playSound(popAudio);
+    }, true);
+    function playSound(audio) {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    }
+    function playPopThen(callback) {
+      playSound(popAudio);
+      setTimeout(callback, 120);
+    }
+    function toggleAuth() {
+      document.getElementById('auth-card').classList.toggle('flipped');
+    }
+    function showAuth() {
+      document.getElementById('meow-map').classList.add('hidden');
+      document.getElementById('auth-card').classList.remove('hidden');
+      document.getElementById('profile-modal').classList.add('hidden');
+      document.getElementById('auth-card').classList.remove('flipped');
+    }
+    function getPhotoX() { return parseInt(sessionStorage.getItem(PHOTO_X_KEY) || localStorage.getItem(PHOTO_X_KEY) || '50') || 50; }
+    function getPhotoY() { return parseInt(sessionStorage.getItem(PHOTO_Y_KEY) || localStorage.getItem(PHOTO_Y_KEY) || '50') || 50; }
+    function getPhotoScale() {
+      const scale = parseFloat(sessionStorage.getItem(PHOTO_SCALE_KEY) || localStorage.getItem(PHOTO_SCALE_KEY) || '1');
+      return isNaN(scale) ? 1 : Math.min(2.5, Math.max(1, scale));
+    }
+    function getStoredLevel() {
+      const values = [
+        sessionStorage.getItem('meow_level'),
+        sessionStorage.getItem('currentLevel'),
+        localStorage.getItem('meow_level'),
+        localStorage.getItem('currentLevel')
+      ].map(value => parseInt(value)).filter(value => !isNaN(value));
+      return values.length ? Math.max(...values) : NaN;
+    }
+    function getCheckpointStarsKey(username = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest') {
+      return `meow_checkpoint_stars_${username}`;
+    }
+    function readCheckpointStars() {
+      try {
+        return {
+          cp1: false,
+          cp2: false,
+          cp3: false,
+          cp4: false,
+          ...JSON.parse(localStorage.getItem(getCheckpointStarsKey()) || sessionStorage.getItem('checkpointStars') || '{}')
+        };
+      } catch {
+        return { cp1: false, cp2: false, cp3: false, cp4: false };
+      }
+    }
+    function hasEarnedCertificate(username = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest') {
+      return localStorage.getItem(`meow_certificate_earned_${username}`) === 'true'
+        || sessionStorage.getItem(`meow_certificate_earned_${username}`) === 'true';
+    }
+    function hasPassedFinalChallenge(username = sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest') {
+      return parseInt(localStorage.getItem(`meow_cp4_score_${username}`) || sessionStorage.getItem('meow_cp4_score') || '0', 10) >= 90;
+    }
+    function renderQuantumStars() {
+      const stars = readCheckpointStars();
+      const target = document.getElementById('quantum-stars');
+      if (target) {
+        target.innerText = METER_STAR_KEYS.map(id => stars[id] ? '★' : '☆').join(' ');
+      }
+    }
+    function renderAvatar(targetId, photo = sessionStorage.getItem(PHOTO_KEY) || localStorage.getItem(PHOTO_KEY), photoX = getPhotoX(), photoY = getPhotoY(), photoScale = getPhotoScale()) {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      target.innerHTML = photo ? `<img src="${photo}" alt="Player photo" style="object-position:${photoX}% ${photoY}%;transform-origin:${photoX}% ${photoY}%;transform:scale(${photoScale});">` : '🐱';
+    }
+    function setStoredProfile(username, meowLv, photo = '', photoX = 50, photoY = 50, photoScale = 1) {
+      const progressLevel = Math.min(Math.max(parseInt(meowLv) || 1, 1), 37);
+      const displayLevel = Math.min(progressLevel, 36);
+      sessionStorage.removeItem(GUEST_KEY);
+      sessionStorage.setItem('currentUser', username);
+      sessionStorage.setItem('meow_level', String(displayLevel));
+      sessionStorage.setItem('currentLevel', String(progressLevel));
+      localStorage.setItem('currentUser', username);
+      localStorage.setItem('meow_level', String(displayLevel));
+      localStorage.setItem('currentLevel', String(progressLevel));
+      if (photo) {
+        sessionStorage.setItem(PHOTO_KEY, photo);
+        localStorage.setItem(PHOTO_KEY, photo);
+      } else {
+        sessionStorage.removeItem(PHOTO_KEY);
+        localStorage.removeItem(PHOTO_KEY);
+      }
+      sessionStorage.setItem(PHOTO_X_KEY, photoX);
+      sessionStorage.setItem(PHOTO_Y_KEY, photoY);
+      sessionStorage.setItem(PHOTO_SCALE_KEY, photoScale);
+      localStorage.setItem(PHOTO_X_KEY, photoX);
+      localStorage.setItem(PHOTO_Y_KEY, photoY);
+      localStorage.setItem(PHOTO_SCALE_KEY, photoScale);
+    }
+    function setGuestProfile() {
+      sessionStorage.clear();
+      localStorage.removeItem('meowAuthToken');
+      sessionStorage.setItem(GUEST_KEY, 'true');
+      sessionStorage.setItem('currentUser', 'Guest');
+      sessionStorage.setItem('meow_level', '1');
+      sessionStorage.setItem('currentLevel', '1');
+      sessionStorage.setItem(PHOTO_X_KEY, '50');
+      sessionStorage.setItem(PHOTO_Y_KEY, '50');
+      sessionStorage.setItem(PHOTO_SCALE_KEY, '1');
+      localStorage.removeItem(PHOTO_KEY);
+      localStorage.removeItem(PHOTO_X_KEY);
+      localStorage.removeItem(PHOTO_Y_KEY);
+      localStorage.removeItem(PHOTO_SCALE_KEY);
+    }
+    function readPhotoInput(input) {
+      const file = input?.files?.[0];
+      if (!file) return Promise.resolve('');
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const image = new Image();
+          image.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxSize = 420;
+            const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+            const width = Math.max(1, Math.round(image.width * scale));
+            const height = Math.max(1, Math.round(image.height * scale));
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.75));
+          };
+          image.onerror = reject;
+          image.src = reader.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    function setupProfileEditor() {
+      document.getElementById('edit-photo')?.addEventListener('change', async event => {
+        const photo = await readPhotoInput(event.target);
+        pendingEditPhoto = photo;
+        if (photo) {
+          renderAvatar('edit-photo-preview', photo, document.getElementById('edit-photo-x').value, document.getElementById('edit-photo-y').value, document.getElementById('edit-photo-scale').value);
+        }
+      });
+      ['edit-photo-x', 'edit-photo-y', 'edit-photo-scale'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
+          renderAvatar('edit-photo-preview', pendingEditPhoto || sessionStorage.getItem(PHOTO_KEY) || localStorage.getItem(PHOTO_KEY), document.getElementById('edit-photo-x').value, document.getElementById('edit-photo-y').value, document.getElementById('edit-photo-scale').value);
+        });
+      });
+    }
+    async function handleLogin() {
+      const username = document.getElementById('login-user').value.trim();
+      const password = document.getElementById('login-pass').value.trim();
+      if (!username || !password) return alert('Please enter both username and password!');
+      const btn = document.getElementById('btn-login');
+      btn.innerText = 'WAITING...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'auth', username, password })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          const meowLevel = parseInt(data.meowtopiaLevel ?? data.level ?? 1) || 1;
+          setStoredProfile(username, meowLevel, data.photo || '', data.photoX || 50, data.photoY || 50, data.photoScale || 1);
+          if (data.authToken) { sessionStorage.setItem('meowAuthToken', data.authToken); localStorage.setItem('meowAuthToken', data.authToken); }
+          showMeowMap(username);
+        } else if (data.status === 'wrong_password') {
+          alert('Wrong password!');
+        } else {
+          alert('Account not found! Please register first.');
+          if (!document.getElementById('auth-card').classList.contains('flipped')) toggleAuth();
+        }
+      } catch {
+        alert('Connection failed!');
+      } finally {
+        btn.innerText = 'START!';
+        btn.disabled = false;
+      }
+    }
+    async function handleRegister() {
+      const username = document.getElementById('reg-user').value.trim();
+      const password = document.getElementById('reg-pass').value.trim();
+      const confirm = document.getElementById('reg-confirm').value.trim();
+      if (!username || !password || !confirm) return alert('Please fill all fields!');
+      if (password !== confirm) return alert('Passwords do not match!');
+      const btn = document.getElementById('btn-reg');
+      btn.innerText = 'WAITING...';
+      btn.disabled = true;
+      try {
+        const photo = await readPhotoInput(document.getElementById('reg-photo'));
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'register', username, password, photo })
+        });
+        const text = await res.text();
+        let status;
+        try { status = JSON.parse(text).status; } catch { status = text.trim(); }
+        if (status === 'success') {
+          alert('Registration successful! Please login.');
+          toggleAuth();
+          document.getElementById('login-user').value = username;
+          document.getElementById('login-pass').focus();
+        } else if (status === 'exists') {
+          alert('Username already taken!');
+        } else {
+          alert('Registration failed.');
+        }
+      } catch {
+        alert('Connection failed!');
+      } finally {
+        btn.innerText = 'JOIN NOW!';
+        btn.disabled = false;
+      }
+    }
+    function handleGuestLogin() {
+      setGuestProfile();
+      showMeowMap('Guest');
+    }
+    function selectMap(mapNumber) {
+      const meowLv = Math.min(Math.max(getStoredLevel() || 1, 1), 37);
+      const stars = readCheckpointStars();
+      const map2Unlocked = meowLv >= 19 && STAR_KEYS.every(id => stars[id]) && hasEarnedCertificate();
+      if (mapNumber === 2 && !map2Unlocked) {
+        alert('Complete Level 18, all four Checkpoints, and earn the certificate to unlock Map 2.');
+        return;
+      }
+      activeMap = mapNumber === 2 ? 2 : 1;
+      rememberHomeMap(activeMap);
+      showMeowMap();
+    }
+    function showMeowMap(user) {
+      const storedUser = user || sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest';
+      const meowLv = Math.min(Math.max(getStoredLevel() || 1, 1), 37);
+      const displayLevel = Math.min(meowLv, 36);
+      const stars = readCheckpointStars();
+      const isGuest = sessionStorage.getItem(GUEST_KEY) === 'true';
+      const certificateRequirementsMet = meowLv >= 19 && STAR_KEYS.every(id => stars[id]) && hasPassedFinalChallenge();
+      const map2Unlocked = certificateRequirementsMet && hasEarnedCertificate();
+      if (!mapQueryApplied) {
+        const requestedMap = new URLSearchParams(location.search).get('map');
+        const rememberedMap = localStorage.getItem(homeMapKey(storedUser))
+          || sessionStorage.getItem(homeMapKey(storedUser))
+          || localStorage.getItem('meowtopiaHomeMap')
+          || '1';
+        if (requestedMap === '1' || requestedMap === '2') activeMap = requestedMap === '2' ? 2 : 1;
+        else activeMap = rememberedMap === '2' ? 2 : 1;
+        mapQueryApplied = true;
+      }
+      if (!map2Unlocked) activeMap = 1;
+      rememberHomeMap(activeMap, storedUser);
+      document.getElementById('auth-card').classList.add('hidden');
+      document.getElementById('meow-map').classList.remove('hidden');
+      document.getElementById('meow-display-username').innerText = storedUser;
+      document.getElementById('meow-display-level').innerText = `LV. ${displayLevel}`;
+      document.getElementById('edit-profile-btn').style.display = sessionStorage.getItem(GUEST_KEY) === 'true' ? 'none' : '';
+      const map1Tab = document.getElementById('map1-tab');
+      const map2Tab = document.getElementById('map2-tab');
+      map1Tab.classList.toggle('active', activeMap === 1);
+      map2Tab.classList.toggle('active', activeMap === 2);
+      map2Tab.classList.toggle('locked', !map2Unlocked);
+      map2Tab.innerText = map2Unlocked ? 'MAP 2' : 'MAP 2 🔒';
+      document.getElementById('map-title').innerText = activeMap === 1 ? 'MAP 1 · QUANTUM BASICS' : 'MAP 2 · PUZZLE EXPANSION';
+      renderAvatar('meow-player-avatar');
+      renderQuantumStars();
+      const grid = document.getElementById('level-grid');
+      grid.innerHTML = '';
+      const mapOneNodes = [
+        { type: 'level', level: 1 },
+        { type: 'checkpoint', id: 'cp1', label: 'Checkpoint 1', unlockLevel: 2 },
+        { type: 'level', level: 2 },
+        { type: 'level', level: 3 },
+        { type: 'level', level: 4 },
+        { type: 'checkpoint', id: 'cp2', label: 'Checkpoint 2', unlockLevel: 5 },
+        { type: 'level', level: 5 },
+        { type: 'level', level: 6 },
+        { type: 'level', level: 7 },
+        { type: 'level', level: 8 },
+        { type: 'level', level: 9 },
+        { type: 'level', level: 10 },
+        { type: 'checkpoint', id: 'cp3', label: 'Checkpoint 3', unlockLevel: 11 },
+        { type: 'level', level: 11 },
+        { type: 'level', level: 12 },
+        { type: 'level', level: 13 },
+        { type: 'level', level: 14 },
+        { type: 'level', level: 15 },
+        { type: 'level', level: 16 },
+        { type: 'level', level: 17 },
+        { type: 'level', level: 18 },
+        { type: 'checkpoint', id: 'cp4', label: 'Checkpoint 4', unlockLevel: 19 },
+        { type: 'certificate', label: 'Certificate' }
+      ];
+      const mapNodes = activeMap === 1
+        ? mapOneNodes
+        : Array.from({ length: 18 }, (_, index) => ({ type: 'level', level: index + 19 }));
+      mapNodes.forEach(item => {
+        const node = document.createElement('a');
+        node.className = 'level-node';
+        if (item.type === 'level') {
+          node.innerText = item.level;
+          const isLevelUnlocked = activeMap === 2
+            ? item.level <= displayLevel
+            : (isGuest || item.level === 1 || item.level <= displayLevel);
+          if (isLevelUnlocked) {
+            node.href = `level${item.level}.html`;
+          } else {
+            node.classList.add('locked');
+            node.onclick = event => {
+              event.preventDefault();
+              alert('Level Locked! Complete previous stages first.');
+            };
+          }
+        } else if (item.type === 'checkpoint') {
+          const completed = Boolean(stars[item.id]);
+          const isFinal = item.id === 'cp4';
+          node.classList.add('checkpoint-node');
+          if (isFinal) node.classList.add('crown-node');
+          if (completed) node.classList.add('completed');
+          node.title = isFinal ? 'Final Challenge' : item.label;
+          node.innerHTML = `<span class="node-icon">${isFinal ? crownIconSVG(completed) : starIconSVG(completed)}</span>`;
+          if (isGuest || meowLv >= item.unlockLevel || completed) {
+            node.href = `checkpoint.html?id=${item.id}`;
+          } else {
+            node.classList.add('locked');
+            node.onclick = event => {
+              event.preventDefault();
+              alert('Checkpoint Locked! Complete the previous learning section first.');
+            };
+          }
+        } else {
+          const unlocked = certificateRequirementsMet;
+          node.classList.add('certificate-node');
+          node.innerText = 'Certificate';
+          if (unlocked) {
+            node.href = 'checkpoint.html?certificate=1';
+          } else {
+            node.classList.add('locked');
+            node.onclick = event => {
+              event.preventDefault();
+              alert('Complete Level 18 and all four Checkpoints, then pass the Final Challenge to earn the certificate.');
+            };
+          }
+        }
+        grid.appendChild(node);
+      });
+    }
+    function openProfileEditor() {
+      if (sessionStorage.getItem(GUEST_KEY) === 'true') {
+        alert('Guest profiles are temporary. Please register to edit and save a profile.');
+        return;
+      }
+      document.getElementById('edit-user').value = sessionStorage.getItem('currentUser') || '';
+      document.getElementById('edit-pass').value = '';
+      document.getElementById('edit-confirm').value = '';
+      document.getElementById('edit-photo').value = '';
+      pendingEditPhoto = '';
+      document.getElementById('edit-photo-x').value = getPhotoX();
+      document.getElementById('edit-photo-y').value = getPhotoY();
+      document.getElementById('edit-photo-scale').value = getPhotoScale();
+      renderAvatar('edit-photo-preview');
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+    function closeProfileEditor() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+    async function handleProfileSave() {
+      const currentUsername = sessionStorage.getItem('currentUser') || '';
+      const username = document.getElementById('edit-user').value.trim();
+      const password = document.getElementById('edit-pass').value.trim();
+      const confirm = document.getElementById('edit-confirm').value.trim();
+      if (!username) return alert('Please enter a username!');
+      if (password !== confirm) return alert('Passwords do not match!');
+      const btn = document.getElementById('btn-profile-save');
+      btn.innerText = 'WAITING...';
+      btn.disabled = true;
+      try {
+        const newPhoto = await readPhotoInput(document.getElementById('edit-photo'));
+        const oldPhoto = sessionStorage.getItem(PHOTO_KEY) || localStorage.getItem(PHOTO_KEY) || '';
+        const photoX = parseInt(document.getElementById('edit-photo-x').value) || 50;
+        const photoY = parseInt(document.getElementById('edit-photo-y').value) || 50;
+        const photoScale = parseFloat(document.getElementById('edit-photo-scale').value) || 1;
+        const payload = {
+          action: 'updateProfile',
+          currentUsername,
+          username,
+          password,
+          photo: newPhoto || oldPhoto,
+          photoX,
+          photoY,
+          photoScale
+        };
+        const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          if (data.authToken) { sessionStorage.setItem('meowAuthToken', data.authToken); localStorage.setItem('meowAuthToken', data.authToken); }
+          const meowLv = parseInt(sessionStorage.getItem('meow_level') || sessionStorage.getItem('currentLevel')) || 1;
+          setStoredProfile(data.username || username, meowLv, data.photo || payload.photo, data.photoX || photoX, data.photoY || photoY, data.photoScale || photoScale);
+          showMeowMap(data.username || username);
+          closeProfileEditor();
+        } else if (data.status === 'exists') {
+          alert('Username already taken!');
+        } else {
+          alert('Update failed.');
+        }
+      } catch {
+        alert('Connection failed!');
+      } finally {
+        btn.innerText = 'SAVE';
+        btn.disabled = false;
+      }
+    }
+    function handleLogout() {
+      sessionStorage.clear();
+      localStorage.removeItem('meowAuthToken');
+      localStorage.removeItem(PHOTO_KEY);
+      localStorage.removeItem(PHOTO_X_KEY);
+      localStorage.removeItem(PHOTO_Y_KEY);
+      localStorage.removeItem(PHOTO_SCALE_KEY);
+      showAuth();
+    }
+
+    /* =========================================================================
+       MY REPLAYS 系統 (分頁檢視無須滾動、放大貓魚比例、無文字紀錄、第一關預設)
+       ========================================================================= */
+    let activeReplay = null, activeReplayIndex = 0, replayTimer = null;
+    let currentReplayConfig = { nodeCount: 0, skin: '', level: 0 };
+
+    async function openReplayLibrary() {
+      const modal = document.getElementById('replay-library');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+      
+      // 開啟時預設顯示列表視圖
+      document.getElementById('replay-list-view').classList.remove('hidden');
+      document.getElementById('replay-player-view').classList.add('hidden');
+      document.getElementById('replay-player-view').classList.remove('flex');
+      
+      const list = document.getElementById('replay-list');
+      const token = sessionStorage.getItem('meowAuthToken') || localStorage.getItem('meowAuthToken');
+      
+      if (!token || sessionStorage.getItem(GUEST_KEY) === 'true') { 
+        list.innerHTML = '<p class="text-center font-bold text-gray-500 py-4">訪客帳號或未登入無復盤紀錄</p>'; 
+        return; 
+      }
+      list.innerHTML = '<p class="text-center font-bold text-gray-500 py-4">Loading replays...</p>';
+      
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getMyReplays&token=${encodeURIComponent(token)}`);
+        const data = await response.json();
+        if (data.status !== 'success') { list.innerHTML = '<p class="text-center font-bold text-red-500 py-4">無法讀取重播資料</p>'; return; }
+        
+        const replays = data.replays || [];
+        if (!replays.length) { list.innerHTML = '<p class="text-center font-bold text-gray-500 py-4">尚無復盤紀錄</p>'; return; }
+        
+        list.innerHTML = replays.map((item, index) => 
+          `<button class="text-left p-4 rounded-2xl border-2 border-[#463438] hover:bg-[#FFF9F0] transition-colors" onclick="openReplay(${index})">
+            <b>Level ${Number(item.level)}</b> — ${Number(item.steps)} steps (${Number(item.time)}s) 
+            <span class="block text-xs text-gray-500 mt-1">${new Date(item.timestamp).toLocaleString()}</span>
+          </button>`
+        ).join('');
+        window.myReplayItems = replays;
+      } catch { 
+        list.innerHTML = '<p class="text-center font-bold text-red-500 py-4">連線失敗</p>'; 
+      }
+    }
+
+    function closeReplayLibrary() {
+      clearInterval(replayTimer);
+      replayTimer = null;
+      currentReplayConfig = { nodeCount: 0, skin: '', level: 0 };
+      const modal = document.getElementById('replay-library');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.getElementById('replay-play-btn').innerText = 'PLAY';
+    }
+    
+    function backToReplayList() {
+      clearInterval(replayTimer);
+      replayTimer = null;
+      document.getElementById('replay-play-btn').innerText = 'PLAY';
+      
+      // 切換回列表視圖
+      document.getElementById('replay-player-view').classList.add('hidden');
+      document.getElementById('replay-player-view').classList.remove('flex');
+      document.getElementById('replay-list-view').classList.remove('hidden');
+    }
+
+    function openReplay(index) {
+      activeReplay = window.myReplayItems[index];
+      activeReplayIndex = 0;
+      currentReplayConfig = { nodeCount: 0, skin: '', level: 0 };
+      
+      // 切換至播放器視圖
+      document.getElementById('replay-list-view').classList.add('hidden');
+      document.getElementById('replay-player-view').classList.remove('hidden');
+      document.getElementById('replay-player-view').classList.add('flex');
+      
+      document.getElementById('replay-title').innerText = `Level ${activeReplay.level} — ${activeReplay.steps} steps`;
+      renderReplayStep();
+    }
+
+    function renderReplayStep() {
+      const events = activeReplay?.replay?.events || [];
+      const event = events[activeReplayIndex];
+      const totalSteps = Math.max(0, events.length - 1);
+      
+      document.getElementById('replay-counter').innerText = `${activeReplayIndex} / ${totalSteps}`;
+      renderReplayBoard(event, Number(activeReplay?.level));
+    }
+
+    function replayImagePath(kind, index, skin, bits) {
+      const rawSkin = (skin || '').toLowerCase();
+      if (rawSkin === 'rip') return `./RIP/${kind === 'c' ? 'Cat' : 'Fish'}${index + 1}.png`;
+      if (rawSkin === 'poto') return `./poto/${kind === 'c' ? 'cat' : 'fish'}${index}.png`;
+      if (rawSkin === 'mj') return `./mj/${kind === 'c' ? 'Cat' : 'Fish'}${index}.png`;
+
+      const code = (index % 8).toString(2).padStart(3, '0');
+      return `./svg/${code}-${kind}.svg`;
+    }
+
+    function getReplayNodePositions(count, level) {
+      // 1-Bit (第 1 關)
+      if (count <= 2 || level === 1) {
+        return [
+          { x: 28, y: 50 }, 
+          { x: 72, y: 50 }
+        ];
+      }
+
+      // 2-Bit (第 2~4 關)
+      if (count <= 4 || (level >= 2 && level <= 4)) {
+        return [
+          { x: 30, y: 25 },
+          { x: 70, y: 25 },
+          { x: 30, y: 75 },
+          { x: 70, y: 75 } 
+        ];
+      }
+
+      // 3-Bit (第 5~8 關)
+      if (count <= 8 || (level >= 5 && level <= 8)) {
+        const positions = [];
+        for (let i = 0; i < 8; i++) {
+          const isInner = (i & 4) !== 0; 
+          const isRight = (i & 1) !== 0; 
+          const isBottom = (i & 2) !== 0; 
+          
+          if (!isInner) { 
+            positions.push({ x: isRight ? 80 : 20, y: isBottom ? 85 : 15 });
+          } else { 
+            positions.push({ x: isRight ? 62 : 38, y: isBottom ? 68 : 32 });
+          }
+        }
+        return positions;
+      }
+
+      // 4-Bit (第 9 關以上)
+      const positions = [];
+      for (let i = 0; i < 16; i++) {
+        const isRightCluster = (i & 8) !== 0;
+        const isInner = (i & 4) !== 0;
+        const isRight = (i & 1) !== 0;
+        const isBottom = (i & 2) !== 0; 
+        
+        let x, y;
+        if (!isRightCluster) {
+          if (!isInner) {
+            x = isRight ? 42 : 14;
+            y = isBottom ? 85 : 30;
+          } else {
+            x = isRight ? 33 : 23;
+            y = isBottom ? 67 : 48;
+          }
+        } else {
+          if (!isInner) {
+            x = isRight ? 86 : 58;
+            y = isBottom ? 70 : 15;
+          } else {
+            x = isRight ? 77 : 67;
+            y = isBottom ? 52 : 33;
+          }
+        }
+        positions.push({ x, y });
+      }
+      return positions;
+    }
+
+    function renderReplayBoard(event, level) {
+      const board = document.getElementById('replay-board');
+      const fishAtNode = event?.fishAtNode;
+      if (!board) return;
+      const capturedLayout = activeReplay?.replay?.layouts?.[event?.skin]
+        || activeReplay?.replay?.events?.[0]?.visualLayouts?.[event?.skin]
+        || activeReplay?.replay?.replayLayouts?.[event?.skin]
+        || activeReplay?.replay?.layout;
+      if (capturedLayout?.nodes?.length && capturedLayout?.fishes?.length) {
+        renderCapturedReplayBoard(board, capturedLayout, event, level);
+        return;
+      }
+      board.style.cssText = '';
+      if (!Array.isArray(fishAtNode) || !fishAtNode.length) {
+        board.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500 font-bold">無重播資料</div>';
+        return;
+      }
+
+      // 取得 Skin (若是第一關，強制使用 default)
+      let detectedSkin = (event?.skin || activeReplay?.replay?.skin || activeReplay?.skin || 'default').toLowerCase();
+      let skin = ['rip', 'poto', 'mj'].includes(detectedSkin) ? detectedSkin : 'default';
+      if (Number(level) === 1) {
+        skin = 'default';
+      }
+
+      const fishAtNodeLayout = level >= 9;
+      const nodeCount = fishAtNode.length;
+
+      let bits = 2;
+      if (nodeCount <= 2 || level === 1) bits = 1;
+      else if (nodeCount <= 4 || (level >= 2 && level <= 4)) bits = 2;
+      else if (nodeCount <= 8 || (level >= 5 && level <= 8)) bits = 3;
+      else bits = 4;
+
+      const positions = getReplayNodePositions(nodeCount, level);
+
+      // 放大圖片以符合原始遊戲比例 (佔據圓框的 90%)
+      const nodeSizeClass = bits <= 2 ? 'w-24 h-24 sm:w-28 sm:h-28' : (bits === 3 ? 'w-[72px] h-[72px] sm:w-[84px] sm:h-[84px]' : 'w-12 h-12 sm:w-14 sm:h-14');
+
+      if (currentReplayConfig.nodeCount !== nodeCount || currentReplayConfig.skin !== skin || currentReplayConfig.level !== level) {
+        currentReplayConfig = { nodeCount, skin, level };
+
+        let svgLines = '';
+        for (let i = 0; i < nodeCount; i++) {
+          for (let b = 0; b < bits; b++) {
+            const j = i ^ (1 << b);
+            if (j > i && j < nodeCount) {
+              const p1 = positions[i];
+              const p2 = positions[j];
+              const isCrossCluster = (b === 3); 
+              
+              const strokeColor = isCrossCluster ? '#a0a0a0' : '#463438';
+              const dashAttr = isCrossCluster ? 'stroke-dasharray="5 5"' : '';
+              const strokeWidth = isCrossCluster ? '0.6' : '0.8';
+              
+              svgLines += `<line x1="${p1.x}%" y1="${p1.y}%" x2="${p2.x}%" y2="${p2.y}%" stroke="${strokeColor}" stroke-width="${strokeWidth}%" ${dashAttr} stroke-linecap="round" opacity="1"/>`;
+            }
+          }
+        }
+        const svgHtml = `<svg class="absolute inset-0 w-full h-full pointer-events-none">${svgLines}</svg>`;
+
+        const catNodesHtml = Array.from({ length: nodeCount }, (_, nodeIndex) => {
+          const pos = positions[nodeIndex];
+          const targetSrc = replayImagePath('c', nodeIndex, skin, bits);
+          const isMjLarge = skin === 'mj' && bits === 4 && nodeIndex % 2 === 1;
+          const catImageSize = (bits >= 4 ? 95 : 90) * (isMjLarge ? 82 / 75 : 1);
+
+          return `
+            <div id="replay-node-${nodeIndex}" class="replay-node-card absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-[#463438] bg-white ${nodeSizeClass} flex flex-col items-center justify-center transition-all duration-300 shadow-sm" style="left: ${pos.x}%; top: ${pos.y}%;overflow:${isMjLarge ? 'visible' : 'hidden'}">
+              <img src="${targetSrc}" style="width:${catImageSize}%;height:${catImageSize}%" class="object-contain pointer-events-none">
+            </div>
+          `;
+        }).join('');
+
+        const fishElementsHtml = Array.from({ length: nodeCount }, (_, fishId) => {
+          const fishSrc = replayImagePath('f', fishId, skin, bits);
+          const isMjLarge = skin === 'mj' && fishId % 2 === 1;
+          const fishImageSize = 61 * (isMjLarge ? 0.92 : 1);
+          return `
+            <div id="replay-fish-${fishId}" class="replay-fish-animated absolute -translate-x-1/2 -translate-y-1/2 ${nodeSizeClass} flex items-center justify-center pointer-events-none z-10 filter drop-shadow-md" style="left: 0%; top: 0%; opacity: 0;">
+            <img src="${fishSrc}" style="width:${fishImageSize}%;height:${fishImageSize}%" class="object-contain">
+            </div>
+          `;
+        }).join('');
+
+        board.innerHTML = svgHtml + catNodesHtml + fishElementsHtml;
+      }
+
+      for (let nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++) {
+        const fishIndex = fishAtNodeLayout ? fishAtNode[nodeIndex] : fishAtNode.indexOf(nodeIndex);
+        const nodeEl = document.getElementById(`replay-node-${nodeIndex}`);
+        const isMatched = fishIndex === nodeIndex;
+
+        if (nodeEl) {
+          if (isMatched) {
+            nodeEl.className = `replay-node-card absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-[#463438] bg-[#ebceff] ${nodeSizeClass} flex flex-col items-center justify-center transition-all duration-300 shadow-md transform scale-105`;
+          } else {
+            nodeEl.className = `replay-node-card absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-[#463438] bg-white ${nodeSizeClass} flex flex-col items-center justify-center transition-all duration-300 shadow-sm`;
+          }
+        }
+      }
+
+      for (let fishId = 0; fishId < nodeCount; fishId++) {
+        const targetNode = fishAtNodeLayout ? fishAtNode.indexOf(fishId) : fishAtNode[fishId];
+        const fishEl = document.getElementById(`replay-fish-${fishId}`);
+
+        if (fishEl) {
+          if (targetNode >= 0 && targetNode < nodeCount) {
+            const pos = positions[targetNode];
+            fishEl.style.left = `${pos.x}%`;
+            fishEl.style.top = `${Math.min(98, pos.y + 2.5)}%`;
+            fishEl.style.opacity = '1';
+          } else {
+            fishEl.style.opacity = '0';
+          }
+        }
+      }
+    }
+
+    function renderCapturedReplayBoard(board, layout, event, level) {
+      const fishAtNode = event?.fishAtNode;
+      const positions = new Map();
+      if (Array.isArray(fishAtNode)) {
+        layout.fishes.forEach(fish => {
+          const nodeId = level >= 9 ? fishAtNode.indexOf(Number(fish.id)) : Number(fishAtNode[Number(fish.id)]);
+          const node = layout.nodes[nodeId];
+          if (!node || nodeId < 0) return;
+          const anchor = layout.anchors?.[nodeId] || { x: 0, y: 5 };
+          positions.set(Number(fish.id), { x: node.x + node.w / 2 + anchor.x, y: node.y + node.h / 2 + anchor.y });
+        });
+      }
+      const aspect = (Number(layout.width) || 1) / (Number(layout.height) || 1);
+      const maxHeight = Math.min(520, Math.floor(window.innerHeight * 0.52));
+      const stageWidth = Math.min(850, maxHeight * aspect);
+      board.style.cssText = `position:relative;display:block;flex:none;width:min(100%,${stageWidth}px);aspect-ratio:${Number(layout.width) || 1}/${Number(layout.height) || 1};max-height:${maxHeight}px;margin:4px auto 0;overflow:hidden;border:4px solid #463438;border-radius:22px;background:#fffaf5;box-shadow:0 5px 0 #FFB7C5`;
+      let html = '';
+      const addImages = (images, kind) => (images || []).map(image => {
+        const src = image.src;
+        if (typeof src !== 'string' || !/^\.\/(?:svg|RIP|poto|mj)\/[\w.-]+\.(?:svg|png)$/i.test(src)) return '';
+        const alt = String(image.alt || '').replace(/[&<>"']/g, '');
+        const filter = typeof image.filter === 'string' ? image.filter.replace(/[;<>]/g, '') : 'none';
+        const opacity = Number.isFinite(Number(image.opacity)) ? Math.max(0, Math.min(1, Number(image.opacity))) : 1;
+        const imageScale = kind === 'cat' && layout.nodes.length >= 16 ? 1.2 : 1;
+        const imageWidth = image.w * imageScale;
+        const imageHeight = image.h * imageScale;
+        const imageLeft = image.x - (imageWidth - image.w) / 2;
+        const imageTop = image.y - (imageHeight - image.h) / 2;
+        return `<img src="${src}" alt="${alt}" style="position:absolute;left:${imageLeft * 100}%;top:${imageTop * 100}%;width:${imageWidth * 100}%;height:${imageHeight * 100}%;object-fit:contain;z-index:${Number(image.z) || 1};filter:${filter};opacity:${opacity};pointer-events:none">`;
+      }).join('');
+      layout.nodes.forEach(node => {
+        const matched = Array.isArray(fishAtNode) && (level >= 9 ? fishAtNode[node.id] === node.id : fishAtNode.indexOf(node.id) === node.id);
+        const nodeIsMjLarge = event?.skin === 'mj' && layout.nodes.length >= 16 && (typeof node.large === 'boolean' ? node.large : node.id % 2 === 1);
+        html += `<div style="position:absolute;left:${node.x * 100}%;top:${node.y * 100}%;width:${node.w * 100}%;height:${node.h * 100}%;overflow:${nodeIsMjLarge ? 'visible' : 'hidden'};border:2px solid #463438;border-radius:50%;background:${matched ? '#ebceff' : '#fff'};box-shadow:2px 2px 0 #463438;z-index:2">`;
+        html += addImages(node.images, 'cat');
+        html += `<span style="position:absolute;right:1px;bottom:1px;z-index:25;padding:0 4px;border:1px solid #463438;border-radius:10px;background:#fff9f0;color:#463438;font:900 9px Arial">${Number(node.id) + 1}</span></div>`;
+      });
+      layout.fishes.forEach(fish => {
+        const pos = positions.get(Number(fish.id));
+        if (!pos) return;
+        const scale = 0.68;
+        const width = fish.w * scale;
+        const height = fish.h * scale;
+        const left = pos.x + (fish.center ? 0 : fish.w * (1 - scale) / 2);
+        const top = pos.y + 0.025 + (fish.center ? 0 : fish.h * (1 - scale) / 2);
+        html += `<div style="position:absolute;left:${left * 100}%;top:${top * 100}%;width:${width * 100}%;height:${height * 100}%;transform:${fish.center ? 'translate(-50%,-50%)' : 'none'};z-index:5;pointer-events:none">`;
+        html += addImages(fish.images, 'fish') + '</div>';
+      });
+      board.innerHTML = html || '<p class="p-4 text-center">No visual state</p>';
+    }
+
+    function replayNext() { 
+      if (!activeReplay) return; 
+      activeReplayIndex = Math.min(activeReplayIndex + 1, (activeReplay.replay.events || []).length - 1); 
+      renderReplayStep(); 
+    }
+    
+    function replayPrevious() { 
+      if (!activeReplay) return; 
+      activeReplayIndex = Math.max(0, activeReplayIndex - 1); 
+      renderReplayStep(); 
+    }
+    
+    function toggleReplayPlayback() {
+      if (replayTimer) { 
+        clearInterval(replayTimer); 
+        replayTimer = null; 
+        document.getElementById('replay-play-btn').innerText = 'PLAY'; 
+        return; 
+      }
+      document.getElementById('replay-play-btn').innerText = 'PAUSE';
+      replayTimer = setInterval(() => { 
+        if (activeReplayIndex >= (activeReplay.replay.events || []).length - 1) { 
+          clearInterval(replayTimer); 
+          replayTimer = null; 
+          document.getElementById('replay-play-btn').innerText = 'PLAY'; 
+          return; 
+        } 
+        replayNext(); 
+      }, 900);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1360">
+  <title>Meowtopia - Learning Checkpoint</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Gaegu:wght@700&family=Titan+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Shrikhand&family=Alfa+Slab+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink: #FFB7C5;
+      --green: #99C44D;
+      --dark: #463438;
+      --cream: #FFF9F0;
+      --blue: #5BA4CF;
+      --purple: #B583E5;
+      --gold: #FFB800;
+      --gray-light: #F3F4F6;
+      --gray-dark: #9CA3AF;
+    }
+
+    * { box-sizing: border-box; }
+
+    body, button, select, textarea, input, p, span, div {
+      font-family: Arial;
+    }
+    h1, .checkpoint-title {
+      font-family: 'Titan One', cursive !important;
+      letter-spacing: 1px;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--cream);
+      background-image: linear-gradient(45deg, #fce4ec 25%, transparent 25%, transparent 50%, #fce4ec 50%, #fce4ec 75%, transparent 75%, transparent);
+      background-size: 80px 80px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 60px;
+    }
+
+    .checkpoint-shell {
+      width: min(1400px, 97%);
+      background: rgba(255, 255, 255, 0.98);
+      border: 5px solid var(--dark);
+      border-radius: 28px;
+      box-shadow: 12px 12px 0 var(--pink);
+      padding: 36px;
+    }
+
+    .header-section {
+      border-bottom: 4px dashed #E5E7EB;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+      width: 100%;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .checkpoint-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green);
+      color: white;
+      border: 3px solid var(--dark);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 0 var(--dark);
+    }
+
+    .checkpoint-title {
+      font-family: 'Titan One', cursive !important;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: white;
+      -webkit-text-stroke: 2px var(--dark);
+      text-shadow: 3px 3px 0 var(--blue);
+      margin-top: 12px;
+      margin-bottom: 0;
+      letter-spacing: 2px;
+    }
+
+    .star-meter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: var(--dark);
+      background: #F9FAFB;
+      padding: 6px 18px;
+      border-radius: 999px;
+      border: 3px solid var(--dark);
+      box-shadow: 0 4px 0 var(--dark);
+      height: 48px;
+      box-sizing: border-box;
+    }
+
+    .star-meter span {
+      font-size: 1.6rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0 var(--dark);
+      transform: translateY(1px);
+    }
+
+    .scene-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 1fr) 720px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .intro-panel,
+    .question-panel,
+    .reward-panel {
+      border: 4px solid var(--dark);
+      border-radius: 20px;
+      background: white;
+      padding: 32px;
+      box-shadow: 6px 6px 0 rgba(70, 52, 56, 0.1);
+    }
+
+    .reward-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(70, 52, 56, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 24px;
+    }
+    .reward-modal-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .reward-modal-content {
+      background: #FFF7D7;
+      border: 8px solid var(--dark);
+      border-radius: 36px;
+      padding: 36px;
+      text-align: center;
+      width: min(480px, 100%);
+      box-shadow: 12px 12px 0 var(--gold);
+      transform: scale(0.8);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    #reward-title {
+      font-size: 1.9rem !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--dark);
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+    #reward-title.shrink-text {
+      font-size: 1.52rem !important; /* 將字體縮小，確保可以塞進一行 */
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      to { transform: scale(1); }
+    }
+
+    .intro-panel {
+      background: linear-gradient(145deg, #ffffff, #F9FAFB);
+    }
+
+    .intro-panel h2 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--dark);
+      margin: 0 0 16px;
+      border-bottom: 4px solid var(--pink);
+      padding-bottom: 12px;
+      display: block;
+    }
+
+    .intro-panel p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #374151;
+      margin: 0 0 20px;
+    }
+
+    .concept-path { display: grid; gap: 12px; }
+
+    .concept-chip {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 14px 18px;
+      background: white;
+      font-size: 1.05rem;
+      transition: border-color 0.2s;
+    }
+    .concept-chip:hover { border-color: var(--blue); }
+    .concept-chip span { color: #6B7280; font-weight: bold; text-align: left; }
+    .concept-chip strong { color: var(--blue); font-weight: 900; font-size: 1.05rem; text-align: left; }
+
+    .step-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px dashed #E5E7EB;
+    }
+
+    .step-progress {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .step-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--gray-light);
+      border: 2px solid var(--gray-dark);
+      transition: all 0.3s;
+      cursor: pointer;
+      padding: 0;
+    }
+    .step-dot:hover {
+      border-color: var(--dark);
+      transform: scale(1.15);
+    }
+    .step-dot.active {
+      background: var(--gold);
+      border-color: var(--dark);
+      transform: scale(1.3);
+    }
+    .step-dot.done {
+      background: var(--green);
+      border-color: var(--dark);
+    }
+    .step-dot:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .question-block {
+      display: none;
+      animation: fadeInRight 0.4s ease forwards;
+    }
+    .question-block.active {
+      display: block;
+    }
+
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .question-panel h3 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--dark);
+      margin: 0 0 20px;
+      line-height: 1.5;
+    }
+
+    .visual-board {
+      min-height: 200px;
+      border: 3px solid #E5E7EB;
+      border-radius: 16px;
+      background: white;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .checkpoint-board {
+      min-height: 250px;
+      border: 6px solid var(--dark);
+      border-radius: 32px;
+      background: #fffaf5;
+      box-shadow: 8px 8px 0 var(--pink);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .checkpoint-node {
+      width: 140px;
+      height: 140px;
+      background: white;
+      border: 6px solid var(--dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      box-shadow: 3px 3px 0 var(--dark);
+      z-index: 20;
+      transition: background 0.3s ease;
+    }
+    .checkpoint-node.node-correct { background: #ebceff; }
+    .checkpoint-node img {
+      width: 98px;
+      height: auto;
+      pointer-events: none;
+      transform: scale(1.05) translateY(-5px) translateX(-2px);
+    }
+
+    .checkpoint-line {
+      position: absolute;
+      background: var(--dark);
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .checkpoint-line:hover,
+    .checkpoint-line.line-highlight {
+      background: var(--green) !important;
+      box-shadow: 0 0 15px rgba(153, 196, 77, 0.8) !important;
+      z-index: 16 !important;
+    }
+    .checkpoint-line::after {
+      content: '';
+      position: absolute;
+      top: -15px;
+      bottom: -15px;
+      left: -15px;
+      right: -15px;
+      background: transparent;
+    }
+
+    .checkpoint-fish {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      z-index: 30;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1), left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .checkpoint-fish img {
+      width: 75px;
+      height: auto;
+      transform: scale(1.05) translateY(-8px);
+    }
+
+    .level1-board .checkpoint-line { height: 8px; top: 50%; left: calc(50% - 75px); right: calc(50% - 75px); transform: translateY(-50%); }
+    .level1-board .node-left { top: 50%; left: 50%; right: auto; transform: translate(calc(-50% - 145px), -50%); }
+    .level1-board .node-right { top: 50%; left: 50%; right: auto; transform: translate(calc(-50% + 145px), -50%); }
+    .level1-board .slot-left { top: 58%; left: calc(50% - 150px); }
+    .level1-board .slot-right { top: 58%; left: calc(50% + 140px); }
+
+    .cp2-lab {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding-left: 15px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+    .cp2-board.cp2-board-custom .path-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 24px;
+      right: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      z-index: 40;
+    }
+
+    .cp2-side-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100px;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      height: 400px;
+    }
+    .path-btn, .multi-toggle-btn {
+      min-height: 40px !important;
+      height: 40px;
+      padding: 0 4px;
+      font-size: 0.8rem !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      white-space: nowrap;
+      border: 3px solid var(--dark);
+      border-radius: 10px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 3px 0 var(--dark);
+      transition: all 0.1s ease;
+    }
+    .path-btn {
+      background: white;
+      color: var(--dark);
+    }
+    .path-btn:hover {
+      transform: translateY(-2px);
+      background: #F0F9FF;
+      box-shadow: 0 5px 0 var(--dark);
+    }
+
+    .multi-toggle-btn.mode-4 { background: #b583e5; color: white; text-shadow: 1px 1px 0 var(--dark); }
+    .multi-toggle-btn.mode-8 { background: #46c89d; color: white; text-shadow: 1px 1px 0 var(--dark); }
+    .multi-toggle-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 var(--dark);
+    }
+    .cp2-board {
+      min-height: 320px;
+      margin-bottom: 0;
+    }
+
+    .cp2-board.cp2-board-custom {
+      min-height: 350px !important;
+      width: 450px !important;
+      max-width: 100%;
+      margin: 0 auto 24px auto;
+      position: relative;
+    }
+
+    .cp2-board.cp2-board-custom .checkpoint-node {
+      width: 110px !important;
+      height: 110px !important;
+    }
+    .cp2-board.cp2-board-custom .checkpoint-node img {
+      width: 90px !important;
+      transform: none !important;
+    }
+
+    .cp2-board.cp2-board-custom .cp2-node-0 { top: 25px !important; left: 60px !important; }
+    .cp2-board.cp2-board-custom .cp2-node-1 { top: 25px !important; right: 60px !important; left: auto !important; }
+    .cp2-board.cp2-board-custom .cp2-node-2 { bottom: 25px !important; left: 60px !important; top: auto !important; }
+    .cp2-board.cp2-board-custom .cp2-node-3 { bottom: 25px !important; right: 60px !important; left: auto !important; top: auto !important; }
+
+    .cp2-board.cp2-board-custom .cp2-slot-0 { top: 95px !important; left: 115px !important; }
+    .cp2-board.cp2-board-custom .cp2-slot-1 { top: 95px !important; left: calc(100% - 115px) !important; }
+    .cp2-board.cp2-board-custom .cp2-slot-2 { top: calc(100% - 60px) !important; left: 115px !important; }
+    .cp2-board.cp2-board-custom .cp2-slot-3 { top: calc(100% - 60px) !important; left: calc(100% - 115px) !important; }
+
+    .cp2-board.cp2-board-custom #cp2-line-h-0 { top: 78px !important; left: 145px !important; right: 145px !important; width: auto !important; }
+    .cp2-board.cp2-board-custom #cp2-line-h-1 { bottom: 78px !important; left: 145px !important; right: 145px !important; width: auto !important; top: auto !important; }
+
+    .cp2-board.cp2-board-custom #cp2-line-v-0 { left: 108px !important; top: 85px !important; bottom: 105px !important; height: auto !important; }
+    .cp2-board.cp2-board-custom #cp2-line-v-1 { right: 108px !important; left: auto !important; top: 85px !important; bottom: 105px !important; height: auto !important; }
+
+    .cp2-board .checkpoint-node {
+      width: 96px;
+      height: 96px;
+      border-width: 5px;
+    }
+    .cp2-board .checkpoint-node img {
+      width: 74px;
+      transform: scale(1.02) translateY(-4px) translateX(-1px);
+    }
+    .cp2-board .fixed-number {
+      position: absolute;
+      bottom: 0px;
+      right: 40px;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--dark);
+      pointer-events: none;
+      z-index: 25;
+    }
+    .cp2-board .checkpoint-fish {
+      width: 62px;
+      height: 62px;
+    }
+    .cp2-board .checkpoint-fish img { width: 58px; }
+    .cp2-node-0 { top: 30px; left: 62px; }
+    .cp2-node-1 { top: 30px; right: 62px; }
+    .cp2-node-2 { bottom: 30px; left: 62px; }
+    .cp2-node-3 { bottom: 30px; right: 62px; }
+    .cp2-slot-0 { top: 106px; left: 110px; }
+    .cp2-slot-1 { top: 106px; left: calc(100% - 110px); }
+    .cp2-slot-2 { top: calc(100% - 63px); left: 110px; }
+    .cp2-slot-3 { top: calc(100% - 63px); left: calc(100% - 110px); }
+    .cp2-line-h {
+      height: 8px;
+      left: 155px;
+      right: 155px;
+    }
+    .cp2-line-v {
+      width: 8px;
+      top: 110px;
+      bottom: 110px;
+    }
+    #cp2-line-h-0 { top: 78px; }
+    #cp2-line-h-1 { bottom: 78px; }
+    #cp2-line-v-0 { left: 110px; }
+    #cp2-line-v-1 { right: 110px; }
+
+    .gate-btn-v2 {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 2.5px solid #463438;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      background-color: transparent;
+    }
+    .gate-btn-v2.btn-not {
+      background-color: rgba(98, 158, 237, 0.35) !important;
+    }
+    .gate-btn-v2:hover {
+      background-color: #FFB7C5 !important;
+      transform: translateY(-2px) scale(1.03);
+      border-color: #463438;
+    }
+
+    .hyper-line { stroke: #463438; stroke-width: 2; opacity: 0.3; }
+    .hyper-line-hi { stroke: #FFB7C5; stroke-width: 4.5; opacity: 1; transition: stroke 0.2s; }
+    .gate-btn-v2 .hyper-line-hi { stroke: #f78790; }
+    .gate-btn-v2:hover .hyper-line-hi { stroke: #ffffff !important; }
+
+    .cp2-side-buttons .path-btn.cp2-mode-btn {
+      height: 76px;
+      width: 72px;
+      min-height: 76px;
+      padding: 0;
+      border-radius: 8px;
+    }
+    .cp2-side-buttons .path-btn.cp2-mode-btn svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .cp2-side-buttons .path-btn.cp2-mode-btn:hover {
+      background-color: #FFB7C5 !important;
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    }
+
+    .cp2-side-buttons .path-btn {
+      height: 50px;
+      width: 100%;
+      min-height: 100px;
+      font-size: 0.95rem !important;
+
+    }
+
+    .cp2-side-buttons .func-btn.btn-reset { width: 100%; min-width: 0; min-height: 44px; height: 44px; margin: 0; padding: 0 6px; font-size: 13px; border-radius: 10px; box-shadow: 0 3px 0 var(--dark); }
+    .func-btn { width: 100%; font-weight: 900; border: 2.5px solid var(--dark); cursor: pointer; }
+    .func-btn.btn-reset { background: #FFF9F0; color: var(--dark); }
+    .func-btn.btn-reset:hover { background-color: #FFB7C5 !important; color: #fff !important; }
+
+    .cp4-bit-viewer { display: flex; align-items: stretch; gap: 16px; margin-bottom: 20px; }
+    .cp4-bit-buttons { display: flex; flex-direction: column; gap: 10px; width: 96px; flex-shrink: 0; align-self: stretch; }
+    .cp4-bit-btn { flex: 1; border: 3px solid var(--dark); border-radius: 14px; padding: 12px 4px; font-weight: 900; font-size: 0.85rem; background: white; cursor: pointer; box-shadow: 0 3px 0 var(--dark); transition: all 0.15s; }
+    .cp4-bit-btn:hover { transform: translateY(-2px); }
+    .cp4-bit-btn.active { background: var(--pink); color: var(--dark); }
+    .cp4-bit-stage { flex: 1; min-height: 260px; border: 6px solid var(--dark); border-radius: 32px; background: #fffaf5; box-shadow: 8px 8px 0 var(--pink); position: relative; overflow: hidden; }
+    .cp4-bit-line { position: absolute; height: 3px; background: var(--dark); opacity: 0.35; transform-origin: 0 50%; border-radius: 999px; z-index: 1; }
+    .cp4-bit-line.dashed { height: 0; background: transparent; border-top: 3px dashed var(--dark); opacity: 0.45; }
+
+    .cp4-results { display: none; margin: 10px 0 26px; padding: 20px 22px; border: 3px dashed var(--dark); border-radius: 18px; background: #FBFBFF; }
+    .cp4-results.show { display: block; animation: fadeInRight 0.4s ease; }
+    .cp4-score-banner { font-weight: 900; font-size: 1.15rem; margin-bottom: 14px; padding: 10px 16px; border-radius: 12px; background: #FFF7D7; }
+    .cp4-score-banner.pass { background: #e3f5d0; color: #276749; }
+    .cp4-score-banner.fail { background: #ffe8e4; color: #7C2D12; }
+    .cp4-result-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; line-height: 1.5; }
+    .cp4-result-row:last-child { border-bottom: none; }
+    .cp4-result-num { font-weight: 900; min-width: 34px; }
+    .cp4-result-row.wrong { color: #b23b3b; }
+
+    .cp3-anim-el { opacity: 0; transition: opacity 0.6s ease; }
+    .cp3-anim-el.visible { opacity: 1; }
+    .cp3-anim-caption { position: absolute; left: 16px; bottom: 12px; z-index: 30; background: rgba(255,255,255,0.92); border: 2px solid var(--dark); border-radius: 999px; padding: 6px 16px; font-weight: 900; font-size: 0.85rem; color: var(--dark); }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      border: 2px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-weight: bold;
+      line-height: 1.6;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct {
+      background: #F0FDF4;
+      border-color: var(--green);
+      color: #276749;
+    }
+    .feedback.wrong {
+      background: #FFF7ED;
+      border-color: var(--gold);
+      color: #7C2D12;
+    }
+
+    .answer-btn:disabled,
+    .feature-btn:disabled,
+    .match-row select:disabled {
+      cursor: default;
+      transform: none;
+    }
+    .answer-btn.locked:not(.selected),
+    .feature-btn.locked:not(.selected) {
+      opacity: 0.5;
+    }
+    .answer-btn.locked.selected,
+    .feature-btn.locked.selected {
+      opacity: 1;
+    }
+
+    .cp3-board {
+      height: 420px;
+      margin-bottom: 26px;
+    }
+    .cp3-graph-inner {
+      position: absolute;
+      inset: 0;
+    }
+    .cp3-line {
+      position: absolute;
+      height: 4px;
+      background: var(--dark);
+      transform-origin: 0 50%;
+      border-radius: 999px;
+      z-index: 4;
+    }
+    .cp3-line.dashed {
+      height: 0;
+      background: transparent;
+      border-top: 4px dashed var(--dark);
+    }
+    .cp3-anim-el.cp3-line.visible { opacity: 0.9; }
+    .cp3-anim-el.cp3-line.dashed.visible { opacity: 0.45; }
+    .cp3-mini-node {
+      width: 58px;
+      height: 58px;
+      border: 4px solid var(--dark);
+      border-radius: 50%;
+      background: #ebceff;
+      box-shadow: 2px 2px 0 var(--dark);
+      position: absolute;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cp3-mini-node img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+    .cp3-mini-node .cp3-fish-mini {
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      left: 50%;
+      bottom: 3px;
+      transform: translateX(-50%);
+      filter: drop-shadow(0 1px 0 white);
+      z-index: 12;
+    }
+    .cp3-mini-node.far-copy img {
+      filter: grayscale(1) saturate(0.35) brightness(0.98);
+    }
+
+    .line-question-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 16px;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.05rem;
+      background: #F9FAFB;
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px solid #E5E7EB;
+    }
+    .line-question-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--dark);
+    }
+    .line-question-row .feature-options { margin-top: 0; }
+    .line-question-row .feature-btn { min-height: 70px; border-width: 2px; }
+    .line-legend {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: -8px 0 22px;
+      font-weight: 900;
+      color: var(--dark);
+    }
+    .line-legend span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+    .legend-stroke {
+      width: 34px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--dark);
+      display: inline-block;
+    }
+    .legend-stroke.horizontal { background: #629eed; }
+    .legend-stroke.vertical { background: #99C44D; transform: rotate(90deg); }
+    .legend-stroke.diagonal { background: #b583e5; transform: rotate(-35deg); }
+    .legend-stroke.dashed { height: 0; border-top: 4px dashed var(--dark); background: transparent; }
+
+    .mini-node {
+      width: 90px;
+      height: 90px;
+      border: 3px solid var(--dark);
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      z-index: 2;
+    }
+
+    .mini-node img { max-width: 60px; max-height: 60px; object-fit: contain; }
+    .mini-label { display: none; }
+
+    .edge-line {
+      position: absolute;
+      height: 4px;
+      background: var(--dark);
+      z-index: 1;
+    }
+    .edge-line.vertical { width: 4px; height: 140px; }
+
+    .toggle-demo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      padding: 40px 20px;
+    }
+
+    .toggle-demo .mini-node { position: relative; inset: auto; margin: 0; }
+
+    .toggle-edge {
+      width: 120px;
+      height: 6px;
+      background: var(--dark);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+      z-index: 1;
+      border-radius: 4px;
+    }
+    .toggle-edge::after {
+      content: '';
+      position: absolute;
+      top: -20px; bottom: -20px; left: 0; right: 0;
+    }
+    .toggle-edge:hover { background: var(--blue); transform: scaleY(1.5); }
+    .toggle-edge.active {
+      background: var(--purple);
+      box-shadow: 0 0 0 6px rgba(181, 131, 229, 0.25);
+    }
+
+    .fish-dot {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 50%;
+      left: calc(50% - 105px);
+      transform: translate(-50%, -50%);
+      transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 5;
+    }
+    .fish-dot.right { left: calc(50% + 105px); }
+    .fish-dot img { width: 100%; height: 100%; object-fit: contain; }
+
+    .hypercube-2bit { height: 320px; }
+    .hypercube-2bit .node-00 { left: 80px; top: 45px; }
+    .hypercube-2bit .node-01 { right: 80px; top: 45px; }
+    .hypercube-2bit .node-10 { left: 80px; bottom: 45px; }
+    .hypercube-2bit .node-11 { right: 80px; bottom: 45px; }
+    .hypercube-2bit .edge-top { left: 125px; top: 88px; width: calc(100% - 250px); }
+    .hypercube-2bit .edge-bottom { left: 125px; bottom: 88px; width: calc(100% - 250px); }
+    .hypercube-2bit .edge-left { left: 123px; top: 90px; height: calc(100% - 180px); width: 4px; }
+    .hypercube-2bit .edge-right { right: 123px; top: 90px; height: calc(100% - 180px); width: 4px; }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .answer-btn, .feature-btn {
+      min-height: 64px;
+      border: 3px solid #E5E7EB;
+      border-radius: 12px;
+      background: white;
+      color: #374151;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .answer-btn:hover, .feature-btn:hover {
+      border-color: var(--blue);
+      background: #F0F9FF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(91, 164, 207, 0.15);
+    }
+
+    .answer-btn.selected, .feature-btn.selected {
+      background: var(--gold);
+      color: var(--dark);
+      border-color: var(--dark);
+      box-shadow: 0 4px 0 var(--dark);
+      transform: translateY(-2px);
+    }
+
+    .feature-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .feature-btn {
+      min-height: 100px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .feature-btn img { width: 48px; height: 48px; object-fit: contain; }
+    .feature-btn small { font-size: 0.9rem; color: #6B7280; }
+    .feature-btn.selected small { color: var(--dark); }
+
+    .matching-grid { display: grid; gap: 16px; margin-top: 16px; }
+
+    .match-feature-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.05rem;
+      background: #F9FAFB;
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px solid #E5E7EB;
+    }
+
+    .match-feature-row .feature-options { margin-top: 0; }
+    .match-feature-row .feature-btn { min-height: 70px; border-width: 2px; }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 16px;
+      align-items: center;
+      font-weight: bold;
+    }
+
+    .match-row select, .reflection-input {
+      width: 100%;
+      border: 2px solid #D1D5DB;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1.05rem;
+      background: white;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .match-row select:focus, .reflection-input:focus { border-color: var(--blue); }
+
+    .reflection-input { min-height: 120px; resize: vertical; }
+
+    .dimension-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .dimension-card {
+      border: 2px solid #E5E7EB;
+      border-radius: 16px;
+      background: white;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-weight: bold;
+      color: #4B5563;
+    }
+    .dimension-card img { width: 56px; height: 56px; object-fit: contain; }
+
+    .step-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .step-box {
+      border: 2px solid #E5E7EB;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      background: #F9FAFB;
+      font-weight: bold;
+      color: #6B7280;
+    }
+
+    .step-box strong {
+      display: block;
+      font-size: 3.5rem;
+      color: var(--blue);
+      line-height: 1;
+      margin: 12px 0;
+    }
+
+    .reward-panel {
+      display: none;
+      text-align: center;
+      margin-top: 32px;
+      background: #FFFAF0;
+      border-color: var(--gold);
+    }
+    .reward-panel.show { display: block; animation: slideUp 0.4s ease-out; }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .reward-star {
+      font-size: 6rem;
+      color: var(--gold);
+      text-shadow: 4px 4px 0 var(--dark);
+      animation: starPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin: 10px 0 20px;
+    }
+
+    @keyframes starPop {
+      0% { transform: scale(0.2) rotate(-30deg); opacity: 0; }
+      50% { transform: scale(1.2) rotate(10deg); }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+
+    .game-btn {
+      cursor: pointer;
+      border: 5px solid var(--dark);
+      border-radius: 60px;
+      padding: 12px 24px;
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      text-shadow: 2px 2px 0 var(--dark);
+      box-shadow: 0 6px 0 var(--dark);
+      position: relative;
+      transition: transform 0.15s, box-shadow 0.15s, top 0.1s;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .game-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 0 var(--dark);
+    }
+    .game-btn:active {
+      top: 4px;
+      box-shadow: 0 2px 0 var(--dark);
+      transform: translateY(0);
+    }
+    .game-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 6px 0 var(--dark) !important;
+      top: 0;
+      filter: grayscale(0.5);
+    }
+    .btn-blue { background: var(--blue); }
+    .btn-green { background: var(--green); }
+    .btn-red { background: var(--pink); }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 3px dashed #E5E7EB;
+    }
+
+    .status-line {
+      min-height: 30px;
+      margin-top: 16px;
+      font-weight: bold;
+      color: var(--blue);
+      text-align: center;
+    }
+
+    .certificate {
+      --cn-navy: #16233F;
+      --cn-navy-soft: #33456B;
+      --cn-gold: #B8933C;
+      --cn-gold-soft: #E4D2A0;
+      --cn-cream: #FBF8F0;
+      text-align: center;
+      display: none;
+      line-height: 1.3;
+    }
+    .certificate.show { display: block; animation: slideUp 0.5s ease; }
+
+    .certificate-box {
+      position: relative;
+      border: 2px solid var(--cn-gold);
+      border-radius: 6px;
+      background: var(--cn-cream);
+      padding: 52px 64px;
+      box-shadow: 0 18px 40px rgba(22, 35, 63, 0.18);
+      margin: 0 auto 28px;
+      width: min(1280px, 96%);
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 48px;
+      align-items: center;
+      text-align: left;
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .certificate-box::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1px solid var(--cn-gold-soft);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+
+    .certificate-corner {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border: 2px solid var(--cn-gold);
+      opacity: 0.85;
+    }
+    .certificate-corner.tl { top: 22px; left: 22px; border-right: none; border-bottom: none; }
+    .certificate-corner.tr { top: 22px; right: 22px; border-left: none; border-bottom: none; }
+    .certificate-corner.bl { bottom: 22px; left: 22px; border-right: none; border-top: none; }
+    .certificate-corner.br { bottom: 22px; right: 22px; border-left: none; border-top: none; }
+
+    .certificate-main-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .certificate-photo-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border-right: 1px solid var(--cn-gold-soft);
+      padding-right: 30px;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .certificate-photo {
+      position: relative;
+      width: 132px !important;
+      height: 132px !important;
+      min-width: 132px !important;
+      min-height: 132px !important;
+      max-width: 132px !important;
+      max-height: 132px !important;
+      border-radius: 50% !important;
+      border: 3px solid var(--cn-gold);
+      background: white;
+      box-shadow: 0 0 0 4px var(--cn-cream), 0 0 0 5px var(--cn-gold-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 18px;
+      flex-shrink: 0;
+      overflow: hidden !important;
+    }
+
+    .certificate-photo img {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 50% !important;
+      display: block !important;
+    }
+    .certificate-photo .certificate-photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .certificate-photo span {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--cn-navy-soft);
+      font-weight: 700;
+    }
+
+    .certificate-seal {
+      display: block;
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 10px;
+      flex-shrink: 0;
+    }
+
+    .certificate-eyebrow {
+      font-family: 'Playfair Display', serif;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--cn-gold);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .certificate h2 {
+      font-family: 'Playfair Display', serif !important;
+      color: var(--cn-navy);
+      font-size: 2.7rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+
+    .certificate-subtitle {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--cn-navy-soft);
+      margin: 0 0 16px;
+      text-align: center;
+    }
+
+    .certificate-divider {
+      width: 80px;
+      height: 2px;
+      background: var(--cn-gold);
+      margin: 0 auto 18px;
+      border-radius: 1px;
+      flex-shrink: 0;
+    }
+
+    .certificate-presented-to {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--cn-navy-soft);
+      margin-bottom: 6px;
+    }
+
+    .certificate-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.7rem;
+      line-height: 1.2;
+      color: var(--cn-navy);
+      margin: 0;
+    }
+
+    .certificate-body {
+      font-size: 1.2rem;
+      line-height: 1.65;
+      color: #374151;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+
+    .certificate-list {
+      display: block;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto 22px;
+      text-align: left;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cn-navy);
+      background: white;
+      padding: 22px 30px;
+      border-radius: 10px;
+      border: 1px solid var(--cn-gold-soft);
+      box-sizing: border-box;
+    }
+
+    .certificate-list div { display: flex; align-items: center; height: 32px; margin-bottom: 14px; }
+    .certificate-list div:last-child { margin-bottom: 0; }
+    .certificate-list div::before {
+      content: '\2726';
+      color: var(--cn-gold);
+      font-size: 1.2rem;
+      font-family: Arial, Helvetica, sans-serif;
+      margin-right: 12px;
+      line-height: normal;
+    }
+
+    .certificate-score {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 46px;
+      padding: 0 28px;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: normal;
+      color: var(--cn-navy);
+      background: var(--cn-gold-soft);
+      border: 1px solid var(--cn-gold);
+      border-radius: 999px;
+      margin: 0 auto 22px;
+      box-sizing: border-box;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .certificate-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      max-width: 600px;
+      width: 100%;
+      margin: 8px auto 0;
+      font-size: 0.95rem;
+      color: var(--cn-navy-soft);
+    }
+    .certificate-footer .certificate-signature {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      color: var(--cn-navy);
+      display: block;
+      border-bottom: 1px solid var(--cn-gold-soft);
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+    }
+
+    .certificate-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .scene-grid { grid-template-columns: 1fr; }
+      .certificate-box { grid-template-columns: 1fr; text-align: center; }
+      .certificate-photo-col { border-right: none; border-bottom: 1px solid var(--cn-gold-soft); padding-right: 0; padding-bottom: 24px; margin-bottom: 4px; }
+      .header-top { flex-direction: column; align-items: stretch; text-align: center; gap: 10px; }
+      .checkpoint-label, .star-meter { justify-content: center; }
+      .feature-options, .dimension-strip { grid-template-columns: repeat(2, 1fr); }
+      .cp2-lab {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding-left: 6px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
+     .cp2-side-buttons {
+       display: flex;
+       flex-direction: column;
+       gap: 20px;
+       width: 100px;
+       flex-shrink: 0;
+       align-items: center;
+       justify-content: center;
+       height: 400px;
+     }
+      .line-question-row { grid-template-columns: 1fr; }
+      .actions { flex-direction: column; }
+    }
+
+    .step-next-btn {
+      width: 100%;
+      min-height: 64px;
+      border: 3px solid #E5E7EB;
+      border-radius: 12px;
+      background: white;
+      color: var(--blue);
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+    }
+    .step-next-btn:hover {
+      border-color: var(--blue);
+      background: #F0F9FF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(91, 164, 207, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <section id="checkpoint-shell" class="checkpoint-shell">
+     <div class="header-section">
+        <div class="header-top">
+          <div id="checkpoint-label" class="checkpoint-label">Checkpoint 1</div>
+          <div class="star-meter">
+            Quantum Stars
+            <span id="star-meter">☆☆☆</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="checkpoint-content">
+        <div class="scene-grid">
+          <aside class="intro-panel">
+            <h2 id="intro-title"></h2>
+            <p id="intro-copy"></p>
+            <div id="concept-path" class="concept-path"></div>
+          </aside>
+
+          <section id="question-area" class="question-panel">
+          </section>
+        </div>
+
+      <div id="reward-modal" class="reward-modal-overlay">
+        <div class="reward-modal-content">
+          <div class="reward-star">★</div>
+           <h2 id="reward-title"></h2>
+          <p id="reward-copy" style="font-size: 1.1rem; margin: 0 0 24px; color: #4B5563; font-weight: bold;"></p>
+
+          <div style="display: flex; flex-direction: column; gap: 14px; align-items: center; justify-content: center; width: 100%;">
+            <button onclick="location.href='index.html'" class="game-btn btn-blue" style="width: 100%; border-radius: 60px; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; font-size: 22px; padding: 12px;">HOME</button>
+
+            <div style="display: flex; gap: 14px; align-items: center; justify-content: center; width: 100%;">
+              <button onclick="location.reload()" class="game-btn btn-green" style="width: 78px; height: 78px; min-width: 78px; border-radius: 50%; padding: 0; display: inline-flex; align-items: center; justify-content: center; margin: 0; box-sizing: border-box;" aria-label="Play again" title="Play again">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" fill="#fff" style="width: 38px; height: 38px; filter: drop-shadow(2px 2px 0 #463438);">
+                      <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-3.06c-.77 1.76-2.54 3-4.67 3c-2.76 0-5-2.24-5-5s2.24-5 5-5c1.38 0 2.63.56 3.54 1.46L12 12h8V4z" />
+                  </svg>
+              </button>
+              <button id="reward-next" class="game-btn btn-green" style="flex-grow: 1; white-space: nowrap; font-size: 22px; padding: 12px 24px;">KEEP GOING</button>
+            </div>
+          </div>
+         </div>
+       </div>
+        <div class="actions">
+         <button onclick="location.href='index.html'" class="game-btn btn-blue">HOME</button>
+          <button id="complete-btn" class="game-btn btn-green" disabled>CLAIM STAR</button>
+        </div>
+        <div id="status-line" class="status-line"></div>
+      </div>
+
+      <div id="certificate-content" class="certificate">
+        <div id="certificate-box" class="certificate-box">
+          <span class="certificate-corner tl"></span>
+          <span class="certificate-corner tr"></span>
+          <span class="certificate-corner bl"></span>
+          <span class="certificate-corner br"></span>
+          <div class="certificate-photo-col">
+            <div id="certificate-photo" class="certificate-photo" aria-label="Player photo">
+              <div class="certificate-photo-placeholder">
+                <svg viewBox="0 0 64 64" width="34" height="34" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="32" cy="24" r="12" stroke="#9CA3AF" stroke-width="3"/>
+                  <path d="M9 55c3-13 12-19 23-19s20 6 23 19" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span>PHOTO</span>
+              </div>
+            </div>
+            <div class="certificate-presented-to">Presented to</div>
+            <div id="certificate-name" class="certificate-name">Explorer</div>
+          </div>
+          <div class="certificate-main-col">
+            <img id="certificate-seal" class="certificate-seal" width="54" height="54" alt="" aria-hidden="true">
+            <div class="certificate-eyebrow">Meowtopia &middot; Certificate of Achievement</div>
+            <h2>Quantum Explorer Certificate</h2>
+            <p class="certificate-subtitle">Awarded for completing the Quantum Explorer learning journey</p>
+            <div class="certificate-divider"></div>
+            <div id="certificate-score" class="certificate-score" style="display:none;"></div>
+            <p class="certificate-body">This certificate is proudly presented for successfully completing all checkpoints and demonstrating a solid understanding of:</p>
+            <div id="certificate-list" class="certificate-list"></div>
+            <div class="certificate-footer">
+              <div>
+                <span class="certificate-signature">Meowtopia</span>
+                Program Director
+              </div>
+              <div id="certificate-date"></div>
+            </div>
+          </div>
+        </div>
+        <div class="certificate-actions">
+          <button onclick="location.href='index.html'" class="game-btn btn-blue">HOME</button>
+          <button onclick="location.href='index.html?map=2'" class="game-btn btn-green">NEXT MAP</button>
+          <button id="certificate-download-btn" onclick="downloadCertificate()" class="game-btn btn-red">DOWNLOAD</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const CHECKPOINT_SCRIPT_URL = '';
+    const SKIN_STORAGE_KEY = 'meowtopiaSkin';
+    const STAR_KEYS = ['cp1', 'cp2', 'cp3', 'cp4'];
+    const METER_STAR_KEYS = ['cp1', 'cp2', 'cp3'];
+    const STAR_NAMES = {
+      cp1: 'State Explorer Star',
+      cp2: 'Geometry Explorer Star',
+      cp3: 'World Explorer Star',
+      cp4: 'Quantum Explorer Certificate'
+    };
+
+    const CHECKPOINTS = {
+      cp1: {
+        title: 'Checkpoint 1', star: STAR_NAMES.cp1, next: 'level2.html',
+        introTitle: 'State Explorer',
+        intro: '🎉 Great job!\nYou solved your first puzzle.\nNow let\'s slow down for a moment and think about what you discovered.\nThese questions are here to help you discover the hidden rules of this world.',
+        concepts: [['Cat Node', 'Target state'], ['Fish', 'Current state'], ['Edge', 'Possible move']],
+        stepsCount: 3
+      },
+      cp2: {
+        title: 'Checkpoint 2', star: STAR_NAMES.cp2, next: 'level5.html',
+        introTitle: 'Geometry Explorer',
+        intro: '🎉 Great job!\nYou completed the 2-feature puzzles.\nNow let\'s slow down and look at how this puzzle is organized.The cats are not placed randomly.Each connection follows a hidden pattern.These questions will help you discover how different directions represent different feature changes.',
+        concepts: [['State', 'A combination of features'], ['Direction', 'A path where the same feature changes'], ['Feature Mapping', 'Different directions represent different feature changes'], ['Advanced Move', 'Applying the same move to multiple states at once']],
+        stepsCount: 3
+      },
+      cp3: {
+        title: 'Checkpoint 3', star: STAR_NAMES.cp3, next: 'level18.html',
+        introTitle: 'World Explorer',
+        intro: '🎉 Great job!\nYou explored the 4-feature puzzles.\nNow let\'s slow down and think about how this world grows.\nAs more features are added, the puzzle becomes larger, but the same rules still work.\nThere are also many ways to solve the same puzzle.\nThese questions will help you discover how larger worlds are built and how to find better solutions.',
+        concepts: [['New Feature', 'A feature that creates more possible states'], ['Larger World', 'A world created by adding more features'], ['Efficient Solution', 'Reaching the same target using fewer moves'], ['Optimization', 'Finding a better solution to the same puzzle']],
+        stepsCount: 4
+      },
+      cp4: {
+        title: 'Final Challenge', star: STAR_NAMES.cp4, next: 'checkpoint.html?certificate=1',
+        introTitle: 'Quantum Explorer Certificate',
+        intro: '🎉 Congratulations!\nYou have completed the Quantum Explorer journey.\nThis final challenge reviews what you discovered about:\n- states and features\n- state transformations\n- reversible operations\n- expanding puzzle worlds\n- efficient solutions\nScore 90% or higher to earn your Quantum Explorer Certificate.',
+        concepts: [['Part 1', 'Quantum Concept Assessment (10 questions)'], ['Part 2', 'Player Reflection (4 questions, not scored)'], ['Passing Score', '90% or higher to earn certificate']],
+        stepsCount: 14
+      }
+    };
+
+    const state = {
+      checkpointId: 'cp1',
+      answers: {},
+      startedAt: Date.now(),
+      attempts: 0,
+      toggleClicks: 0,
+      demoFishRight: false,
+      mistakes: {},
+      cp1FishAtNode: [0, 1],
+      cp2FishAtNode: [0, 1, 2, 3],
+      currentStep: 1,
+      totalSteps: 2
+    };
+
+    function getUser() { return sessionStorage.getItem('currentUser') || localStorage.getItem('currentUser') || 'Guest'; }
+    function getStarsKey() { return `meow_checkpoint_stars_${getUser()}`; }
+    function defaultStars() { return { cp1: false, cp2: false, cp3: false, cp4: false }; }
+    function readStars() {
+      try { return { ...defaultStars(), ...JSON.parse(localStorage.getItem(getStarsKey()) || sessionStorage.getItem('checkpointStars') || '{}') }; }
+      catch { return defaultStars(); }
+    }
+    function writeStars(stars) {
+      const normalized = { ...defaultStars(), ...stars };
+      localStorage.setItem(getStarsKey(), JSON.stringify(normalized));
+      sessionStorage.setItem('checkpointStars', JSON.stringify(normalized));
+    }
+    function updateStarMeter() {
+      const stars = readStars();
+      document.getElementById('star-meter').innerText = METER_STAR_KEYS.map(id => stars[id] ? '★' : '☆').join('');
+    }
+
+    function currentSkin() {
+      const skin = sessionStorage.getItem(SKIN_STORAGE_KEY) || 'default';
+      return ['default', 'rip', 'poto', 'mj'].includes(skin) ? skin : 'default';
+    }
+    function featureImageIndex(index) {
+      return Math.max(0, 3 - Number(index));
+    }
+    function featureSrc(index) {
+      const imageIndex = featureImageIndex(index);
+      const skin = currentSkin();
+      if (skin === 'rip') return `./RIP/dif${imageIndex}.png`;
+      if (skin === 'poto') return `./poto/dif${imageIndex}.png`;
+      if (skin === 'mj') return `./mj/dif${imageIndex}.png`;
+      return `./svg/dif${imageIndex}.png`;
+    }
+    function defaultFeatureSrc(index) {
+      const imageIndex = featureImageIndex(index);
+      return `./svg/dif${imageIndex}.png`;
+    }
+    function codeFor(index, bits = 1) { return index.toString(2).padStart(Math.max(bits, 3), '0'); }
+    function defaultCatSrc(index, bits = 1) { return `./svg/${codeFor(index, bits)}-c.svg`; }
+    function defaultFishSrc(index, bits = 1) { return `./svg/${codeFor(index, bits)}-f.svg`; }
+    function catSrc(index, bits = 1) {
+      const skin = currentSkin();
+      if (skin === 'rip') return `./RIP/Cat${index + 1}.png`;
+      if (skin === 'poto') return `./poto/cat${index}.png`;
+      if (skin === 'mj') return `./mj/Cat${index}.png`;
+      return defaultCatSrc(index, bits);
+    }
+    function fishSrc(index, bits = 1) {
+      const skin = currentSkin();
+      if (skin === 'rip') return `./RIP/Fish${index + 1}.png`;
+      if (skin === 'poto') return `./poto/fish${index}.png`;
+      if (skin === 'mj') return `./mj/Fish${index}.png`;
+      return defaultFishSrc(index, bits);
+    }
+    function bitCatSrc(index, bits) {
+      const skin = currentSkin();
+      if (skin !== 'default') return catSrc(bits >= 4 ? (index % 16) : index, bits);
+      if (bits >= 4) return defaultCatSrc(index & 7, 3);
+      return defaultCatSrc(index, Math.max(bits, 1));
+    }
+    function bitFishSrc(index, bits) {
+      const skin = currentSkin();
+      if (skin !== 'default') return fishSrc(bits >= 4 ? (index % 16) : index, bits);
+      if (bits >= 4) return defaultFishSrc(index & 7, 3);
+      return defaultFishSrc(index, Math.max(bits, 1));
+    }
+    function isFarCopy(index, bits) { return bits >= 4 && index >= 8; }
+
+    function renderStepHeader(totalSteps) {
+      let dots = Array.from({length: totalSteps}).map((_, i) => `
+        <button class="step-dot" id="dot-${i+1}" type="button" onclick="goToStep(${i + 1})" aria-label="Question ${i + 1}"></button>
+      `).join('');
+      return `
+        <div class="step-header">
+          <div class="step-progress">${dots}</div>
+        </div>
+      `;
+    }
+
+    function stepQuestionIds(step) {
+      const expected = expectedAnswers(state.checkpointId) || {};
+      return Object.keys(expected).filter(key => QUESTION_STEPS[key] === step);
+    }
+
+    function isStepAnswered(step) {
+      const ids = stepQuestionIds(step);
+      return ids.length === 0 || ids.every(hasAnswer);
+    }
+
+    function canVisitStep(step) {
+      if (step <= 1) return true;
+      for (let i = 1; i < step; i++) {
+        if (!isStepAnswered(i)) return false;
+      }
+      return true;
+    }
+
+    function updateStepUI() {
+      document.querySelectorAll('.step-dot').forEach((dot, index) => {
+        const step = index + 1;
+        const active = step === state.currentStep;
+        dot.classList.toggle('active', active);
+        dot.classList.toggle('done', !active && isStepAnswered(step));
+        dot.disabled = !canVisitStep(step);
+      });
+      document.querySelectorAll('.question-block').forEach(block => {
+        block.classList.toggle('active', parseInt(block.dataset.step) === state.currentStep);
+      });
+      checkFinalCompletion();
+    }
+
+    function goToStep(step) {
+      if (!canVisitStep(step)) return;
+      state.currentStep = Math.max(1, Math.min(state.totalSteps, step));
+      updateStepUI();
+    }
+
+    function nextStep() {
+      if (state.currentStep < state.totalSteps) {
+        state.currentStep++;
+        updateStepUI();
+
+        if (state.checkpointId === 'cp1' && cp1StepStates[state.currentStep]) {
+          cp1StepStates[state.currentStep] = { fishAtNode: [0, 1], toggleClicks: 0 };
+          updateCP1StepDemoUI(state.currentStep);
+        }
+
+        setTimeout(() => {
+          const questionArea = document.getElementById('question-area') || document.getElementById('checkpoint-shell');
+          if (questionArea) {
+            questionArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 50);
+      }
+    }
+
+    function prevStep() {
+      if (state.currentStep > 1) {
+        state.currentStep--;
+        updateStepUI();
+      }
+    }
+
+    function selectAnswer(questionId, value) {
+      const isFinalTest = state.checkpointId === 'cp4';
+      const resultsRevealed = document.getElementById('cp4-results')?.classList.contains('show');
+      if (hasAnswer(questionId) && !(isFinalTest && !resultsRevealed)) return;
+      state.answers[questionId] = value;
+      document.querySelectorAll(`[data-question="${questionId}"]`).forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.value === String(value));
+      });
+      document.getElementById('status-line').innerText = '';
+      showQuestionFeedback(questionId, value);
+      if (!isFinalTest) lockQuestion(questionId);
+      checkFinalCompletion();
+      updateStepUI();
+    }
+
+    function selectDropdownAnswer(questionId, value) {
+      if (!value || hasAnswer(questionId)) return;
+      state.answers[questionId] = value;
+      showQuestionFeedback(questionId, value);
+      lockQuestion(questionId);
+      checkFinalCompletion();
+      updateStepUI();
+    }
+
+    function lockQuestion(questionId) {
+      document.querySelectorAll(`[data-question="${questionId}"]`).forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('locked');
+      });
+      const select = document.getElementById(questionId);
+      if (select) select.disabled = true;
+    }
+
+    function hasAnswer(key) { return state.answers[key] !== undefined && state.answers[key] !== ''; }
+
+    function checkFinalCompletion() {
+      if (state.checkpointId === 'cp4' && typeof CP4_ALL_KEYS !== 'undefined' && CP4_ALL_KEYS.every(hasAnswer)) {
+        const panel = document.getElementById('cp4-results');
+        if (panel && !panel.classList.contains('show')) revealCP4Results();
+      }
+      const btn = document.getElementById('complete-btn');
+      if (!btn) return;
+      const missing = missingRequired();
+      const wrong = unresolvedMistakes();
+
+      if (missing.length === 0) {
+        btn.disabled = false;
+        if (wrong.length > 0) {
+          if (state.checkpointId === 'cp4') {
+            btn.innerText = 'RETAKE TEST';
+            btn.onclick = retakeFinalTest;
+          } else {
+            btn.innerText = 'RETRY MISSED';
+            btn.onclick = startMistakeRetry;
+          }
+        } else {
+          btn.innerText = 'CLAIM STAR';
+          btn.onclick = completeCheckpoint;
+        }
+        btn.style.animation = 'starPop 0.5s ease forwards';
+      } else {
+        btn.disabled = true;
+        btn.innerText = 'CLAIM STAR';
+        btn.onclick = completeCheckpoint;
+      }
+    }
+
+    function showQuestionFeedback(questionId, value) {
+      const expected = expectedAnswers(state.checkpointId) || {};
+      const isScored = Object.prototype.hasOwnProperty.call(expected, questionId);
+      const deferReveal = state.checkpointId === 'cp4' && CP4_PART1_KEYS.includes(questionId);
+
+      if (isScored) {
+        const isCorrect = String(value) === String(expected[questionId]);
+        if (isCorrect) {
+          delete state.mistakes[questionId];
+        } else {
+          state.mistakes[questionId] = true;
+        }
+
+        if (!deferReveal) {
+          const feedback = document.querySelector(`[data-feedback="${questionId}"]`);
+          if (feedback) {
+            const meta = QUESTION_META[questionId] || {};
+            feedback.className = `feedback show ${isCorrect ? 'correct' : 'wrong'}`;
+            if (isCorrect) {
+              feedback.innerHTML = `Correct.<br>${meta.explanation || ''}`;
+            } else {
+              feedback.innerHTML = `${meta.wrong || 'Review this question carefully.'}`;
+            }
+          }
+        }
+      }
+
+      if (isStepAnswered(state.currentStep) && state.currentStep < state.totalSteps) {
+        const activeBlock = document.querySelector(`.question-block[data-step="${state.currentStep}"]`);
+        if (activeBlock) {
+          let nextContainer = activeBlock.querySelector('.step-next-container');
+          if (!nextContainer) {
+            nextContainer = document.createElement('div');
+            nextContainer.className = 'step-next-container';
+            nextContainer.style.display = 'flex';
+            nextContainer.style.justifyContent = 'flex-end';
+            nextContainer.style.marginTop = '24px';
+            activeBlock.appendChild(nextContainer);
+          }
+          nextContainer.innerHTML = `<button onclick="nextStep()" class="step-next-btn">NEXT ➜</button>`;
+        }
+      }
+
+      setTimeout(() => {
+        const actionsArea = document.querySelector('.actions') || document.getElementById('complete-btn');
+        if (actionsArea) {
+          actionsArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+      }, 100);
+    }
+
+    function feedbackSlot(questionId) {
+      return `<div class="feedback" data-feedback="${questionId}"></div>`;
+    }
+
+    function unresolvedMistakes() {
+      const expected = expectedAnswers(state.checkpointId) || {};
+
+      if (state.checkpointId === 'cp4') {
+        if (!CP4_ALL_KEYS.every(hasAnswer)) return [];
+        const wrongKeys = CP4_PART1_KEYS.filter(key => String(state.answers[key]) !== String(expected[key]));
+        const correctCount = CP4_PART1_KEYS.length - wrongKeys.length;
+        return correctCount < 9 ? wrongKeys : [];
+      }
+
+      return Object.keys(state.mistakes).filter(key => state.mistakes[key] && String(state.answers[key]) !== String(expected[key]));
+    }
+    function clearAnswerForRetry(questionId) {
+      delete state.answers[questionId];
+      delete state.mistakes[questionId];
+      document.querySelectorAll(`[data-question="${questionId}"]`).forEach(btn => {
+        btn.classList.remove('selected', 'locked');
+        btn.disabled = false;
+      });
+      const select = document.getElementById(questionId);
+      if (select) {
+        select.value = '';
+        select.disabled = false;
+      }
+      const feedback = document.querySelector(`[data-feedback="${questionId}"]`);
+      if (feedback) {
+        feedback.className = 'feedback';
+        feedback.innerHTML = '';
+      }
+      const step = QUESTION_STEPS[questionId];
+      if (step) {
+        const block = document.querySelector(`.question-block[data-step="${step}"]`);
+        if (block) {
+          const nextContainer = block.querySelector('.step-next-container');
+          if (nextContainer) nextContainer.remove();
+        }
+      }
+    }
+
+    function retakeFinalTest() {
+      const panel = document.getElementById('cp4-results');
+      if (panel) panel.classList.remove('show');
+      CP4_ALL_KEYS.forEach(questionId => clearAnswerForRetry(questionId));
+      state.currentStep = 1;
+      updateStepUI();
+      setTimeout(() => {
+        const questionArea = document.getElementById('question-area') || document.getElementById('checkpoint-shell');
+        if (questionArea) questionArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+
+    function startMistakeRetry() {
+      const wrong = unresolvedMistakes();
+      if (!wrong.length) return;
+
+      if (state.checkpointId === 'cp4') {
+        const panel = document.getElementById('cp4-results');
+        if (panel) panel.classList.remove('show');
+      }
+
+      wrong.forEach(questionId => {
+        clearAnswerForRetry(questionId);
+        const step = QUESTION_STEPS[questionId];
+        if (step && state.checkpointId === 'cp1' && cp1StepStates[step]) {
+          cp1StepStates[step] = { fishAtNode: [0, 1], toggleClicks: 0 };
+          updateCP1StepDemoUI(step);
+        }
+      });
+
+      const first = wrong[0];
+      const targetStep = QUESTION_STEPS[first] || 1;
+      state.currentStep = targetStep;
+
+      updateStepUI();
+
+      setTimeout(() => {
+        const questionArea = document.getElementById('question-area') || document.getElementById('checkpoint-shell');
+        if (questionArea) {
+          questionArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 50);
+    }
+
+    function optionButtons(questionId, options) {
+      return `<div class="option-grid">${options.map(option => `
+        <button class="answer-btn" data-question="${questionId}" data-value="${option.value}" onclick="selectAnswer('${questionId}', '${option.value.replace(/'/g, "\\'")}')">${option.label}</button>
+      `).join('')}</div>${feedbackSlot(questionId)}`;
+    }
+    function featureButtons(questionId, count = 4) {
+      return `<div class="feature-options">${Array.from({ length: count }, (_, index) => `
+        <button class="feature-btn" data-question="${questionId}" data-value="${index}" onclick="selectAnswer('${questionId}', '${index}')">
+          <img src="${featureSrc(index)}" alt="Feature ${index + 1}">
+          <small>Feature ${index + 1}</small>
+        </button>
+      `).join('')}</div>${feedbackSlot(questionId)}`;
+    }
+    function nodeHtml(index, bits, cls, label) {
+      return `<div class="mini-node ${cls}"><img src="${catSrc(index, bits)}" alt="${label}"></div>`;
+    }
+
+    function renderIntro(cp) {
+      document.getElementById('checkpoint-label').innerText = `${cp.title} - ${cp.star}`;
+      document.getElementById('intro-title').innerText = cp.introTitle;
+      document.getElementById('intro-copy').innerText = cp.intro;
+      document.getElementById('concept-path').innerHTML = cp.concepts.map(pair => `
+        <div class="concept-chip"><span>${pair[0]}</span><strong>${pair[1]}</strong></div>
+      `).join('');
+      state.totalSteps = cp.stepsCount;
+    }
+    let cp1StepStates = {
+      1: { fishAtNode: [0, 1], toggleClicks: 0 },
+      2: { fishAtNode: [0, 1], toggleClicks: 0 },
+      3: { fishAtNode: [0, 1], toggleClicks: 0 }
+    };
+
+    function level1BoardForStep(step) {
+      return `
+        <div class="checkpoint-board level1-board" id="cp1-board-${step}">
+          <div class="checkpoint-line" onclick="toggleCP1StepDemo(${step})" title="Click twice"></div>
+          <div data-cp1-node="0" class="checkpoint-node node-left node-correct"><img src="${defaultCatSrc(0, 1)}" alt="left cat"></div>
+          <div data-cp1-node="1" class="checkpoint-node node-right node-correct"><img src="${defaultCatSrc(1, 1)}" alt="right cat"></div>
+          <div data-cp1-fish="0" class="checkpoint-fish slot-left"><img src="${defaultFishSrc(0, 1)}" alt="left fish"></div>
+          <div data-cp1-fish="1" class="checkpoint-fish slot-right"><img src="${defaultFishSrc(1, 1)}" alt="right fish"></div>
+        </div>
+      `;
+    }
+
+    function toggleCP1StepDemo(step) {
+      playPop();
+      if (!cp1StepStates[step]) {
+        cp1StepStates[step] = { fishAtNode: [0, 1], toggleClicks: 0 };
+      }
+      cp1StepStates[step].toggleClicks += 1;
+      cp1StepStates[step].fishAtNode = cp1StepStates[step].fishAtNode.map(node => node === 0 ? 1 : 0);
+      updateCP1StepDemoUI(step);
+    }
+
+    function updateCP1StepDemoUI(step) {
+      const board = document.getElementById(`cp1-board-${step}`);
+      if (!board) return;
+      const stateArr = cp1StepStates[step]?.fishAtNode || [0, 1];
+
+      [0, 1].forEach(fish => {
+        board.querySelectorAll(`[data-cp1-fish="${fish}"]`).forEach(el => {
+          el.classList.toggle('slot-left', stateArr[fish] === 0);
+          el.classList.toggle('slot-right', stateArr[fish] === 1);
+        });
+      });
+      [0, 1].forEach(node => {
+        board.querySelectorAll(`[data-cp1-node="${node}"]`).forEach(el => {
+          el.classList.toggle('node-correct', stateArr[node] === node);
+        });
+      });
+    }
+
+    function renderCP1() {
+      cp1StepStates = {
+        1: { fishAtNode: [0, 1], toggleClicks: 0 },
+        2: { fishAtNode: [0, 1], toggleClicks: 0 },
+        3: { fishAtNode: [0, 1], toggleClicks: 0 }
+      };
+
+      document.getElementById('question-area').innerHTML = `
+        ${renderStepHeader(3)}
+        <div class="question-block active" data-step="1">
+          ${level1BoardForStep(1)}
+          <h3>1. Observe two connected cats.<br>How many features are different between these two cats?</h3>
+          ${optionButtons('cp1_q1', [{label:'0', value:'0'}, {label:'1', value:'1'}, {label:'2', value:'2'}, {label:'3', value:'3'}])}
+        </div>
+        <div class="question-block" data-step="2">
+          ${level1BoardForStep(2)}
+          <h3>2. Click the same edge twice. What happens to the fish?</h3>
+          ${optionButtons('cp1_q2', [
+            {label:'The fish returns to its original position.', value:'back'},
+            {label:'The fish keeps moving forward.', value:'move'},
+            {label:'The fish disappears.', value:'gone'}
+          ])}
+        </div>
+        <div class="question-block" data-step="3">
+          ${level1BoardForStep(3)}
+          <h3>3. What does the line between two cats represent?</h3>
+          ${optionButtons('cp1_q3', [
+            {label:'A. The distance between two cats.', value:'dist'},
+            {label:'B. A possible move that changes one state into another.', value:'move_state'},
+            {label:'C. A decoration that makes the game look nicer.', value:'decor'}
+          ])}
+        </div>
+      `;
+      [1, 2, 3].forEach(step => updateCP1StepDemoUI(step));
+      updateStepUI();
+    }
+
+   function getCP2ModeSVG(type) {
+      const miniNodes = [
+        { x: 20, y: 20 },
+        { x: 80, y: 20 },
+        { x: 20, y: 80 },
+        { x: 80, y: 80 }
+      ];
+      const edges = [
+        { p: [0, 1], axis: 'horizontal' },
+        { p: [2, 3], axis: 'horizontal' },
+        { p: [0, 2], axis: 'vertical' },
+        { p: [1, 3], axis: 'vertical' }
+      ];
+      let svg = `<svg viewBox="0 0 100 100" style="width:100%; height:100%; pointer-events:none; display: block;" preserveAspectRatio="xMidYMid meet">`;
+      edges.forEach(({ p: [i, j], axis }) => {
+        const n1 = miniNodes[i], n2 = miniNodes[j];
+        const isHighlighted = axis === type;
+        const lineClass = isHighlighted ? 'hyper-line-hi' : 'hyper-line';
+        const strokeW = isHighlighted ? 4.5 : 2;
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" class="${lineClass}" style="stroke-width: ${strokeW}" stroke-linecap="round"/>`;
+      });
+      miniNodes.forEach(n => { svg += `<circle cx="${n.x}" cy="${n.y}" r="6" fill="#463438"/>`; });
+      svg += `</svg>`;
+      return svg;
+    }
+
+    function cp2Board() {
+      return `
+        <div class="cp2-lab">
+          <div class="cp2-side-buttons">
+            <button class="path-btn cp2-mode-btn gate-btn-v2 btn-not" onclick="applyCP2Move('horizontal')" onmouseover="highlightCP2Lines('horizontal', true)" onmouseout="highlightCP2Lines('horizontal', false)" title="Mode Horizontal" aria-label="Mode Horizontal">${getCP2ModeSVG('horizontal')}</button>
+            <button class="path-btn cp2-mode-btn gate-btn-v2 btn-not" onclick="applyCP2Move('vertical')" onmouseover="highlightCP2Lines('vertical', true)" onmouseout="highlightCP2Lines('vertical', false)" title="Mode Vertical" aria-label="Mode Vertical">${getCP2ModeSVG('vertical')}</button>
+            <button class="path-btn" onclick="resetCP2Demo()">Reset</button>
+          </div>
+
+          <div class="checkpoint-board cp2-board cp2-board-custom">
+            <div id="cp2-line-h-0" class="checkpoint-line cp2-line-h"></div>
+            <div id="cp2-line-h-1" class="checkpoint-line cp2-line-h"></div>
+            <div id="cp2-line-v-0" class="checkpoint-line cp2-line-v"></div>
+            <div id="cp2-line-v-1" class="checkpoint-line cp2-line-v"></div>
+            ${[0, 1, 2, 3].map(index => `
+              <div id="cp2-node-${index}" class="checkpoint-node cp2-node-${index} node-correct">
+                <img src="${catSrc(index, 2)}" alt="cat state ${index}">
+              </div>
+            `).join('')}
+            ${[0, 1, 2, 3].map(index => `
+              <div id="cp2-fish-${index}" class="checkpoint-fish cp2-slot-${index}">
+                <img src="${fishSrc(index, 2)}" alt="fish state ${index}">
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function swapCP2Pairs(pairs) {
+      state.cp2FishAtNode = state.cp2FishAtNode.map(node => {
+        for (const [a, b] of pairs) {
+          if (node === a) return b;
+          if (node === b) return a;
+        }
+        return node;
+      });
+      updateCP2DemoUI();
+    }
+
+    function applyCP2Move(type) {
+      if (type === 'horizontal') swapCP2Pairs([[0, 1], [2, 3]]);
+      if (type === 'vertical') swapCP2Pairs([[0, 2], [1, 3]]);
+    }
+
+    function resetCP2Demo() {
+      state.cp2FishAtNode = [0, 1, 2, 3];
+      updateCP2DemoUI();
+    }
+
+    function highlightCP2Lines(type, active) {
+      const ids = type === 'horizontal' ? ['cp2-line-h-0', 'cp2-line-h-1'] : ['cp2-line-v-0', 'cp2-line-v-1'];
+      ids.forEach(id => document.getElementById(id)?.classList.toggle('line-highlight', active));
+    }
+
+    function updateCP2DemoUI() {
+      state.cp2FishAtNode.forEach((node, fish) => {
+        const el = document.getElementById(`cp2-fish-${fish}`);
+        if (!el) return;
+        [0, 1, 2, 3].forEach(slot => el.classList.toggle(`cp2-slot-${slot}`, slot === node));
+      });
+      [0, 1, 2, 3].forEach(node => {
+        const el = document.getElementById(`cp2-node-${node}`);
+        if (el) el.classList.toggle('node-correct', state.cp2FishAtNode[node] === node);
+      });
+    }
+
+    function renderCP2() {
+      resetCP2Demo();
+      document.getElementById('question-area').innerHTML = `
+        ${renderStepHeader(3)}
+        ${cp2Board()}
+        <div class="question-block active" data-step="1">
+          <h3>1. Look at the horizontal connections.<br>Which feature changes between the cats connected by these lines?</h3>
+          ${optionButtons('cp2_horizontal', [
+            {label:`<img src="${featureSrc(0)}" alt="Feature 1" style="width:28px; display:inline-block; vertical-align:middle;" /> `, value:'0'},
+            {label:`<img src="${featureSrc(1)}" alt="Feature 2" style="width:28px; display:inline-block; vertical-align:middle;" /> `, value:'1'},
+            {label:`<img src="${featureSrc(0)}" alt="Feature 1" style="width:20px; display:inline-block; vertical-align:middle; margin:0 2px;" /> <span>  &  <span> <img src="${featureSrc(1)}" alt="Feature 2" style="width:20px; display:inline-block; vertical-align:middle; margin:0 2px;" /> `, value:'2'},
+            {label:'No feature changes', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="2">
+          <h3>2. Look at the vertical connections.<br>Which feature changes between the cats connected by these lines?</h3>
+          ${optionButtons('cp2_vertical', [
+            {label:`<img src="${featureSrc(0)}" alt="Feature 1" style="width:28px; display:inline-block; vertical-align:middle;" /> `, value:'0'},
+            {label:`<img src="${featureSrc(1)}" alt="Feature 2" style="width:28px; display:inline-block; vertical-align:middle;" /> `, value:'1'},
+            {label:`<img src="${featureSrc(0)}" alt="Feature 1" style="width:20px; display:inline-block; vertical-align:middle; margin:0 2px;" /> <span>  &  <span> <img src="${featureSrc(1)}" alt="Feature 2" style="width:20px; display:inline-block; vertical-align:middle; margin:0 2px;" /> `, value:'2'},
+            {label:'No feature changes', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="3">
+          <h3>3. Why can an Advanced Move solve the puzzle with fewer moves?</h3>
+          ${optionButtons('cp2_q2', [
+            {label:'It applies the same move to multiple connected states at the same time.', value:'0'},
+            {label:'It moves fish randomly closer to their targets.', value:'1'},
+            {label:'It changes the puzzle rules.', value:'2'}
+          ])}
+        </div>
+      `;
+      updateCP2DemoUI();
+      updateStepUI();
+    }
+    function getCP2ModeSVG(type) {
+      const miniNodes = [
+        { x: 20, y: 20 },
+        { x: 80, y: 20 },
+        { x: 20, y: 80 },
+        { x: 80, y: 80 }
+      ];
+      const edges = [
+        { p: [0, 1], axis: 'horizontal' },
+        { p: [2, 3], axis: 'horizontal' },
+        { p: [0, 2], axis: 'vertical' },
+        { p: [1, 3], axis: 'vertical' }
+      ];
+      let svg = `<svg viewBox="0 0 100 100" style="width:100%; height:100%; pointer-events:none; display: block;" preserveAspectRatio="xMidYMid meet">`;
+      edges.forEach(({ p: [i, j], axis }) => {
+        const n1 = miniNodes[i], n2 = miniNodes[j];
+        const isHighlighted = axis === type;
+        const lineClass = isHighlighted ? 'hyper-line-hi' : 'hyper-line';
+        const strokeW = isHighlighted ? 4.5 : 2;
+        svg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" class="${lineClass}" style="stroke-width: ${strokeW}" stroke-linecap="round"/>`;
+      });
+      miniNodes.forEach(n => { svg += `<circle cx="${n.x}" cy="${n.y}" r="6" fill="#463438"/>`; });
+      svg += `</svg>`;
+      return svg;
+    }
+    function cp3Board() {
+      const scale = 0.68;
+      const offsetX = 118;
+      const offsetY = 215;
+      const getPos = (i) => {
+        let x = (i & 1) ? 120 : 0;
+        let y = (i & 2) ? 120 : 0;
+        if (i & 4) {
+          x += (i & 1) ? 90 : -80;
+          y += (i & 2) ? 80 : -80;
+        }
+        if (i & 8) {
+          x += 400;
+          y -= 80;
+        }
+        return { x: x * scale + offsetX, y: y * scale + offsetY };
+      };
+      const lineClass = ['horizontal', 'vertical', 'diagonal', 'dashed'];
+      let html = '<div class="visual-board cp3-board" id="cp3-anim-board"><div class="cp3-graph-inner" id="cp3-graph-inner">';
+      for (let i = 0; i < 16; i++) {
+        for (let edgeType = 0; edgeType < 4; edgeType++) {
+          const j = i ^ (1 << edgeType);
+          if (j <= i) continue;
+          const p1 = getPos(i);
+          const p2 = getPos(j);
+          const len = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+          const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+          const phase = edgeType === 3 ? 3 : (i < 8 ? 1 : 2);
+          html += `<div class="cp3-line ${lineClass[edgeType]} cp3-anim-el" data-phase="${phase}" style="left:${p1.x}px; top:${p1.y}px; width:${len}px; transform:rotate(${angle}deg);"></div>`;
+        }
+      }
+      for (let i = 0; i < 16; i++) {
+        const p = getPos(i);
+        const phase = i < 8 ? 1 : 2;
+        html += `
+          <div class="cp3-mini-node cp3-anim-el ${isFarCopy(i, 4) ? 'far-copy' : ''}" data-phase="${phase}" style="left:${p.x}px; top:${p.y}px; transform:translate(-50%, -50%);">
+            <img src="${bitCatSrc(i, 4)}" alt="cat state ${i}">
+            <img class="cp3-fish-mini" src="${bitFishSrc(i, 4)}" alt="fish state ${i}">
+          </div>
+        `;
+      }
+      html += '</div>';
+      html += '<div class="cp3-anim-caption" id="cp3-anim-caption">Step 1 / 3</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function centerCP3Graph() {
+      const board = document.getElementById('cp3-anim-board');
+      const inner = document.getElementById('cp3-graph-inner');
+      if (!board || !inner) return;
+      inner.style.transform = 'translate(0px, 0px)';
+      const nodes = inner.querySelectorAll('.cp3-mini-node');
+      if (!nodes.length) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      nodes.forEach(node => {
+        const left = parseFloat(node.style.left);
+        const top = parseFloat(node.style.top);
+        minX = Math.min(minX, left);
+        maxX = Math.max(maxX, left);
+        minY = Math.min(minY, top);
+        maxY = Math.max(maxY, top);
+      });
+      const boardW = board.clientWidth, boardH = board.clientHeight;
+      const offsetX = boardW / 2 - (minX + maxX) / 2;
+      const offsetY = boardH / 2 - (minY + maxY) / 2;
+      inner.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    }
+
+    let cp3AnimTimer = null;
+    function playCP3Animation() {
+      const board = document.getElementById('cp3-anim-board');
+      if (!board) return;
+      const els = board.querySelectorAll('.cp3-anim-el');
+      const captions = {
+        1: 'Step 1 / 3',
+        2: 'Step 2 / 3',
+        3: 'Step 3 / 3'
+      };
+      let phase = 0;
+      const step = () => {
+        phase = phase >= 3 ? 1 : phase + 1;
+        els.forEach(el => {
+          const p = parseInt(el.dataset.phase, 10);
+          el.classList.toggle('visible', p <= phase);
+        });
+        const caption = document.getElementById('cp3-anim-caption');
+        if (caption) caption.innerText = captions[phase];
+      };
+      step();
+      if (cp3AnimTimer) clearInterval(cp3AnimTimer);
+      cp3AnimTimer = setInterval(step, 1800);
+    }
+
+    function lineFeatureQuestion(questionId, label, strokeClass) {
+      return `
+        <div class="line-question-row">
+          <span class="line-question-label"><i class="legend-stroke ${strokeClass}"></i>${label}</span>
+          ${featureButtons(questionId, 4)}
+        </div>
+      `;
+    }
+
+    function renderCP3() {
+      document.getElementById('question-area').innerHTML = `
+        ${renderStepHeader(4)}
+
+        ${cp3Board()}
+
+        <div class="question-block active" data-step="1">
+          <h3>1. When a new feature is added, how does the puzzle world grow?</h3>
+          ${optionButtons('cp3_q1', [
+            {label:'A. Build a completely new puzzle from the beginning.', value:'0'},
+            {label:'B. Copy the existing world and connect matching states using the new feature.', value:'1'},
+            {label:'C. Add random cats and connect them freely.', value:'2'}
+          ])}
+        </div>
+        <div class="question-block" data-step="2">
+          <h3>2. If the game has 5 features, and each feature has 2 possible choices, how many different states can exist?</h3>
+          ${optionButtons('cp3_q2', [
+            {label:'A. 16', value:'0'},
+            {label:'B. 25', value:'1'},
+            {label:'C. 32', value:'2'},
+            {label:'D. 64', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="3">
+          <h3>3. Two players solved the same puzzle. Player A used 8 moves. Player B used 4 moves. Why is Player B\'s solution better?</h3>
+          ${optionButtons('cp3_q3', [
+            {label:'The fish reaches the target using fewer moves.', value:'0'},
+            {label:'The fish becomes bigger.', value:'1'},
+            {label:'More cats appear.', value:'2'},
+            {label:'The puzzle becomes easier.', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="4">
+          <h3>4. Why do we look for more efficient solutions?</h3>
+          ${optionButtons('cp3_q4', [
+            {label:'A. To reach the same target using fewer moves.', value:'0'},
+            {label:'B. To create more cats.', value:'1'},
+            {label:'C. To change the puzzle rules.', value:'2'},
+            {label:'D. To make the fish move randomly.', value:'3'}
+          ])}
+        </div>
+      `;
+      updateStepUI();
+      centerCP3Graph();
+      playCP3Animation();
+    }
+
+    function renderCP4() {
+      document.getElementById('question-area').innerHTML = `
+        ${renderStepHeader(14)}
+
+        <div class="cp4-bit-viewer">
+          <div class="cp4-bit-buttons">
+            <button class="cp4-bit-btn active" data-bits="1" onclick="showCP4Bits(1)">1-bit</button>
+            <button class="cp4-bit-btn" data-bits="2" onclick="showCP4Bits(2)">2-bit</button>
+            <button class="cp4-bit-btn" data-bits="3" onclick="showCP4Bits(3)">3-bit</button>
+            <button class="cp4-bit-btn" data-bits="4" onclick="showCP4Bits(4)">4-bit</button>
+          </div>
+          <div class="cp4-bit-stage" id="cp4-bit-stage"></div>
+        </div>
+
+        <div class="question-block active" data-step="1">
+          <h3>Question 1: State Understanding<br>What does each cat represent?</h3>
+          ${optionButtons('cp4_q1', [
+            {label:'A. A game picture', value:'0'},
+            {label:'B. A state with features', value:'1'},
+            {label:'C. A score number', value:'2'},
+            {label:'D. A random object', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="2">
+          <h3>Question 2: Connected States<br>How many features are different between two connected cats?</h3>
+          ${optionButtons('cp4_q2', [
+            {label:'A. Zero features', value:'0'},
+            {label:'B. One feature', value:'1'},
+            {label:'C. Two features', value:'2'},
+            {label:'D. Many features', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="3">
+          <h3>Question 3: State Transformation<br>What does a connection between cats represent?</h3>
+          ${optionButtons('cp4_q3', [
+            {label:'A. A possible state change', value:'0'},
+            {label:'B. A visual decoration', value:'1'},
+            {label:'C. A score connection', value:'2'},
+            {label:'D. A random movement', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="4">
+          <h3>Question 4: Reversible Operation<br>What happens when the same operation is used twice?</h3>
+          ${optionButtons('cp4_q4', [
+            {label:'A. It goes back again', value:'0'},
+            {label:'B. It disappears away', value:'1'},
+            {label:'C. It changes randomly', value:'2'},
+            {label:'D. It creates anew', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="5">
+          <h3>Question 5: Expanding the Puzzle World<br>When a new feature is added, how does the world grow?</h3>
+          ${optionButtons('cp4_q5', [
+            {label:'A. It creates random states', value:'0'},
+            {label:'B. It connects new states', value:'1'},
+            {label:'C. It removes old states', value:'2'},
+            {label:'D. It changes all rules', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="6">
+          <h3>Question 6: Higher-dimensional Structure<br>When more features are added, what remains unchanged?</h3>
+          ${optionButtons('cp4_q6', [
+            {label:'A. The basic rules', value:'0'},
+            {label:'B. The number of states', value:'1'},
+            {label:'C. The puzzle size', value:'2'},
+            {label:'D. The target location', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="7">
+          <h3>Question 7: Advanced Move<br>Why can an Advanced Move help solve puzzles?</h3>
+          ${optionButtons('cp4_q7', [
+            {label:'A. It changes many states together', value:'0'},
+            {label:'B. It skips puzzle rules', value:'1'},
+            {label:'C. It moves without goals', value:'2'},
+            {label:'D. It creates new targets', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="8">
+          <h3>Question 8: Circuit Mapping<br>What does a player\'s solution path represent?</h3>
+          ${optionButtons('cp4_q8', [
+            {label:'A. A sequence of operations', value:'0'},
+            {label:'B. A list of pictures', value:'1'},
+            {label:'C. A record of scores', value:'2'},
+            {label:'D. A random route', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="9">
+          <h3>Question 9: Optimization<br>Two players solve the same puzzle. Player A uses 10 moves. Player B uses 5 moves. Which solution is more efficient?</h3>
+          ${optionButtons('cp4_q9', [
+            {label:'A. Player A', value:'0'},
+            {label:'B. Player B', value:'1'},
+            {label:'C. Both players', value:'2'},
+            {label:'D. Neither player', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="10">
+          <h3>Question 10: Quantum Reversible Circuit<br>What does this puzzle world represent?</h3>
+          ${optionButtons('cp4_q10', [
+            {label:'A. A cat collection game', value:'0'},
+            {label:'B. A circuit problem', value:'1'},
+            {label:'C. A drawing activity', value:'2'},
+            {label:'D. A random challenge', value:'3'}
+          ])}
+        </div>
+
+        <div class="question-block" data-step="11">
+          <h3>Part 2: Player Reflection (1/4)</h3>
+          <p style="margin-bottom: 8px; font-weight: bold;">Before playing this game, how familiar were you with quantum computing?</p>
+          ${optionButtons('cp4_ref1', [
+            {label:'Very familiar', value:'0'},
+            {label:'Somewhat familiar', value:'1'},
+            {label:'Heard of it', value:'2'},
+            {label:'Never learned it', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="12">
+          <h3>Part 2: Player Reflection (2/4)</h3>
+          <p style="margin-bottom: 8px; font-weight: bold;">After playing this game, do you understand reversible operations better?</p>
+          ${optionButtons('cp4_ref2', [
+            {label:'Strongly agree', value:'0'},
+            {label:'Agree', value:'1'},
+            {label:'Neutral', value:'2'},
+            {label:'Disagree / Strongly disagree', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="13">
+          <h3>Part 2: Player Reflection (3/4)</h3>
+          <p style="margin-bottom: 8px; font-weight: bold;">Which part helped you understand the concepts most?</p>
+          ${optionButtons('cp4_ref3', [
+            {label:'Cat features', value:'0'},
+            {label:'Fish movement', value:'1'},
+            {label:'Advanced moves', value:'2'},
+            {label:'Short solutions / Other', value:'3'}
+          ])}
+        </div>
+        <div class="question-block" data-step="14">
+          <h3>Part 2: Player Reflection (4/4)</h3>
+          <p style="margin-bottom: 8px; font-weight: bold;">What was your favorite part of this game?</p>
+          <textarea class="reflection-input" placeholder="Type your thoughts here..." oninput="state.answers.cp4_ref4=this.value; checkFinalCompletion();"></textarea>
+        </div>
+
+        <div class="cp4-results" id="cp4-results"></div>
+      `;
+      updateStepUI();
+      showCP4Bits(1);
+      if (CP4_ALL_KEYS.every(hasAnswer)) revealCP4Results();
+    }
+
+    function bitStagePositions(bits) {
+      const count = Math.pow(2, bits);
+      const pts = [];
+      for (let i = 0; i < count; i++) {
+        let x = (i & 1) ? 1 : 0;
+        let y = (bits >= 2 && (i & 2)) ? 1 : 0;
+        if (bits >= 3 && (i & 4)) { x += (i & 1) ? 0.7 : -0.6; y += (i & 2) ? 0.6 : -0.6; }
+        if (bits >= 4 && (i & 8)) { x += 3.2; y -= 0.5; }
+        pts.push({ i, x, y });
+      }
+      return pts;
+    }
+    function renderCP4BitStage(bits) {
+      const stage = document.getElementById('cp4-bit-stage');
+      if (!stage) return;
+      const pts = bitStagePositions(bits);
+      const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+      const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+      const stageW = stage.clientWidth || 380, stageH = stage.clientHeight || 260, pad = 46;
+      const rawSpanX = maxX - minX, rawSpanY = maxY - minY;
+      const spanX = rawSpanX || 1, spanY = rawSpanY || 1;
+      const scale = Math.min((stageW - pad * 2) / spanX, (stageH - pad * 2) / spanY);
+      const drawnW = spanX * scale, drawnH = spanY * scale;
+      const offsetX = (stageW - drawnW) / 2;
+      const offsetY = (stageH - drawnH) / 2;
+      const toPx = (p) => ({
+        px: rawSpanX === 0 ? stageW / 2 : offsetX + (p.x - minX) * scale,
+        py: rawSpanY === 0 ? stageH / 2 : offsetY + (p.y - minY) * scale
+      });
+      const posByIndex = {};
+      pts.forEach(p => { posByIndex[p.i] = toPx(p); });
+
+      let linesHtml = '';
+      pts.forEach(p => {
+        for (let b = 0; b < bits; b++) {
+          const j = p.i ^ (1 << b);
+          if (j <= p.i) continue;
+          const other = posByIndex[j];
+          if (!other) continue;
+          const a = posByIndex[p.i];
+          const len = Math.hypot(other.px - a.px, other.py - a.py);
+          const angle = Math.atan2(other.py - a.py, other.px - a.px) * 180 / Math.PI;
+          const isCrossCluster = bits >= 4 && b === 3;
+          linesHtml += `<div class="cp4-bit-line${isCrossCluster ? ' dashed' : ''}" style="left:${a.px}px; top:${a.py}px; width:${len}px; transform:rotate(${angle}deg);"></div>`;
+        }
+      });
+
+      let nodesHtml = '';
+      pts.forEach(p => {
+        const { px, py } = posByIndex[p.i];
+        nodesHtml += `<div class="cp3-mini-node ${isFarCopy(p.i, bits) ? 'far-copy' : ''}" style="left:${px}px; top:${py}px; transform:translate(-50%, -50%);">
+          <img src="${bitCatSrc(p.i, bits)}" alt="state ${p.i}">
+          <img class="cp3-fish-mini" src="${bitFishSrc(p.i, bits)}" alt="fish ${p.i}">
+        </div>`;
+      });
+      stage.innerHTML = linesHtml + nodesHtml;
+    }
+    function showCP4Bits(bits) {
+      document.querySelectorAll('.cp4-bit-btn').forEach(btn => btn.classList.toggle('active', parseInt(btn.dataset.bits, 10) === bits));
+      renderCP4BitStage(bits);
+    }
+
+    const CP4_PART1_KEYS = ['cp4_q1', 'cp4_q2', 'cp4_q3', 'cp4_q4', 'cp4_q5', 'cp4_q6', 'cp4_q7', 'cp4_q8', 'cp4_q9', 'cp4_q10'];
+    const CP4_PART2_KEYS = ['cp4_ref1', 'cp4_ref2', 'cp4_ref3', 'cp4_ref4'];
+    const CP4_ALL_KEYS = CP4_PART1_KEYS.concat(CP4_PART2_KEYS);
+
+    function revealCP4Results() {
+      const panel = document.getElementById('cp4-results');
+      if (!panel) return;
+      const expected = expectedAnswers('cp4');
+      let correct = 0;
+      const rows = CP4_PART1_KEYS.map((key, idx) => {
+        const isCorrect = String(state.answers[key]) === String(expected[key]);
+        if (isCorrect) correct++;
+        const meta = QUESTION_META[key] || {};
+        return `<div class="cp4-result-row ${isCorrect ? 'correct' : 'wrong'}">
+          <span class="cp4-result-num">Q${idx + 1}</span>
+          <span>${isCorrect ? '✅' : '❌'}</span>
+          <span class="cp4-result-text">${isCorrect ? (meta.explanation || 'Correct.') : (meta.wrong || 'Review this question.')}</span>
+        </div>`;
+      }).join('');
+      const score = correct * 10;
+      const user = getUser();
+      localStorage.setItem(`meow_cp4_score_${user}`, String(score));
+      sessionStorage.setItem('meow_cp4_score', String(score));
+      const passed = score >= 90;
+      panel.innerHTML = `
+        <div class="cp4-score-banner ${passed ? 'pass' : 'fail'}">Part 1 Score: ${score} / 100${passed ? ' 🎉 You\'ve unlocked the certificate!' : ' (Score 90+ to unlock the certificate)'}</div>
+        ${rows}
+      `;
+      panel.classList.add('show');
+      CP4_PART1_KEYS.forEach(lockQuestion);
+      checkFinalCompletion();
+      setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+
+    function expectedAnswers(id) {
+      return {
+        cp1: { cp1_q1: '1', cp1_q2: 'back', cp1_q3: 'move_state' },
+        cp2: { cp2_horizontal: '0', cp2_vertical: '1', cp2_q2: '0' },
+        cp3: { cp3_q1: '1', cp3_q2: '2', cp3_q3: '0', cp3_q4: '0' },
+        cp4: {
+          cp4_q1: '1', cp4_q2: '1', cp4_q3: '0', cp4_q4: '0',
+          cp4_q5: '1', cp4_q6: '0', cp4_q7: '0', cp4_q8: '0', cp4_q9: '1', cp4_q10: '1'
+        }
+      }[id] || {};
+    }
+
+    function missingRequired() {
+      const expected = expectedAnswers(state.checkpointId);
+      const missing = Object.keys(expected).filter(key => !state.answers[key]);
+      if (state.checkpointId === 'cp4') {
+        ['cp4_ref1', 'cp4_ref2', 'cp4_ref3'].forEach(key => {
+          if (!state.answers[key]) missing.push(key);
+        });
+        if (!(state.answers.cp4_ref4 || '').trim()) missing.push('cp4_ref4');
+      }
+      return missing;
+    }
+
+    async function completeCheckpoint() {
+      state.attempts += 1;
+      const missing = missingRequired();
+      if (missing.length > 0) return;
+      if (unresolvedMistakes().length > 0) {
+        startMistakeRetry();
+        return;
+      }
+
+      const cp = CHECKPOINTS[state.checkpointId];
+      const stars = readStars();
+
+      const alreadyCollected = stars[state.checkpointId];
+
+      stars[state.checkpointId] = true;
+      writeStars(stars);
+
+      const nextLevel = { cp1: 2, cp2: 5, cp3: 11, cp4: 19 }[state.checkpointId];
+      const curLvl = Math.max(parseInt(sessionStorage.getItem('currentLevel') || '1'), parseInt(sessionStorage.getItem('meow_level') || '1'));
+      const upLvl = Math.max(curLvl, nextLevel);
+      sessionStorage.setItem('currentLevel', String(upLvl));
+      sessionStorage.setItem('meow_level', String(Math.min(upLvl, 36)));
+      updateStarMeter();
+
+      if (alreadyCollected) {
+        document.getElementById('reward-copy').innerText = 'You already collected this star, but great job reviewing!';
+      } else {
+        document.getElementById('reward-copy').innerText = 'You successfully converted your discoveries into learning progress!';
+      }
+
+      try {
+        meowAudio.currentTime = 0;
+        meowAudio.play().catch(() => {});
+      } catch (e) {}
+
+      const rewardTitleEl = document.getElementById('reward-title');
+      rewardTitleEl.innerText = cp.star;
+      
+      // 如果是最後一關 (cp4)，就套用縮小字體的 class
+      if (state.checkpointId === 'cp4') {
+        rewardTitleEl.classList.add('shrink-text');
+      } else {
+        rewardTitleEl.classList.remove('shrink-text');
+      }
+      // --- 新增的修改區塊結束 ---
+
+      document.getElementById('reward-modal').classList.add('show');
+      document.getElementById('complete-btn').style.display = 'none';
+      document.getElementById('status-line').innerText = '';
+    }
+    const QUESTION_STEPS = {
+      cp1_q1: 1, cp1_q2: 2, cp1_q3: 3,
+      cp2_horizontal: 1, cp2_vertical: 2, cp2_q2: 3,
+      cp3_q1: 1, cp3_q2: 2, cp3_q3: 3, cp3_q4: 4,
+      cp4_q1: 1, cp4_q2: 2, cp4_q3: 3, cp4_q4: 4, cp4_q5: 5, cp4_q6: 6, cp4_q7: 7, cp4_q8: 8, cp4_q9: 9, cp4_q10: 10,
+      cp4_ref1: 11, cp4_ref2: 12, cp4_ref3: 13, cp4_ref4: 14
+    };
+    const QUESTION_META = {
+      cp1_q1: {
+        label: '1',
+        explanation: `Great observation! Connected cats differ by exactly <img src="${defaultFeatureSrc(0)}" alt="dif" style="width:25px; display:inline-block; vertical-align:middle; margin:0 4px;" />. Every move along an edge changes exactly one feature.`,
+        wrong: 'Look carefully at the features of both cats. Compare them one by one. When two cats are connected, only one feature changes.'
+      },
+      cp1_q2: {
+        label: 'The fish returns to its original position.',
+        explanation: 'Exactly! The first click changes the fish\'s position, and the second click brings it back. This type of move is called a reversible operation. It can return the fish to its original state.',
+        wrong: 'Try clicking the same edge twice and watch carefully. The fish does not disappear or keep moving forever. It returns to its original position.'
+      },
+      cp1_q3: {
+        label: 'B. A possible move that changes one state into another.',
+        explanation: 'The line represents a possible move between two states. When you click an edge, the fish moves from one state to another.',
+        wrong: 'Look at what happens when you click the line. The line allows the fish to move from one cat to another. It represents a move between states, not just a distance or decoration.'
+      },
+      cp2_horizontal: {
+        label: `<img src="${featureSrc(0)}" alt="Feature 1" style="width:25px; display:inline-block; vertical-align:middle;" /> changes`,
+        explanation: `Great observation! Compare several cats connected by horizontal lines. You will find that only <img src="${featureSrc(0)}" alt="Feature 1" style="width:25px; display:inline-block; vertical-align:middle; margin:0 4px;" /> changes, while the other feature stays the same. This means the horizontal direction represents changes in <img src="${featureSrc(0)}" alt="Feature 1" style="width:25px; display:inline-block; vertical-align:middle; margin:0 4px;" />.`,
+        wrong: 'Look at several horizontal connections. Compare the cats at both ends of each line. Which feature changes every time in this direction?'
+      },
+      cp2_vertical: {
+        label: `<img src="${featureSrc(1)}" alt="Feature 2" style="width:25px; display:inline-block; vertical-align:middle;" /> changes`,
+        explanation: `Exactly! Compare several cats connected by vertical lines. Only <img src="${featureSrc(1)}" alt="Feature 2" style="width:25px; display:inline-block; vertical-align:middle; margin:0 4px;" /> changes, while the other feature stays the same. This means the vertical direction represents changes in <img src="${featureSrc(1)}" alt="Feature 2" style="width:25px; display:inline-block; vertical-align:middle; margin:0 4px;" />.`,
+        wrong: 'Look at several vertical connections. Compare the cats at both ends of each line. Which feature changes every time in this direction?'
+      },
+      cp2_q2: {
+        label: 'It applies the same move to multiple connected states at the same time.',
+        explanation: 'Correct! An Advanced Move applies the same move to several connected states together. Instead of repeating the same move many times, it can solve the puzzle with fewer moves.',
+        wrong: 'Watch what happens after using an Advanced Move. The puzzle rules do not change. Think about how many states are affected by one move.'
+      },
+      cp3_q1: {
+        label: 'B. Copy the existing world and connect matching states using the new feature.',
+        explanation: 'Correct! The original world stays the same. A new feature creates another copy of the world, and matching states are connected together. This allows the world to grow while keeping the same rules.',
+        wrong: 'Think about how the puzzle becomes larger. Does the old world disappear, or is it used to build the new one?'
+      },
+      cp3_q2: {
+        label: 'C. 32',
+        explanation: 'Exactly! Each new feature doubles the number of possible states. With five features: 2 × 2 × 2 × 2 × 2 = 32. More features create more possible states.',
+        wrong: 'Think about what happens every time a new feature is added. How does the number of possible states change?'
+      },
+      cp3_q3: {
+        label: 'The fish reaches the target using fewer moves.',
+        explanation: 'Great observation! Both players reached exactly the same target. Player B found a way to solve the puzzle using fewer moves. This is a more efficient solution.',
+        wrong: 'Compare the two solutions carefully. Both players solved the same puzzle. Think about what is different between their solutions.'
+      },
+      cp3_q4: {
+        label: 'A. To reach the same target using fewer moves.',
+        explanation: 'Exactly! The goal stays the same. Instead of changing the puzzle, we try to find a shorter way to reach the same target. Finding a better way to solve the same puzzle is called optimization.',
+        wrong: 'Think about what changes when a solution becomes better. The puzzle is the same. The target is the same. Only the path becomes more efficient.'
+      },
+     cp4_q1: { label: 'B. A state with features', explanation: 'Great observation! Each cat represents a state. A state is described by its combination of features.', wrong: 'Look carefully at the cats. Compare their features and think about what makes each cat different.' },
+      cp4_q2: { label: 'B. One feature', explanation: 'Exactly! Connected cats differ by only one feature. Each move changes one part of the state.', wrong: 'Look at the two connected cats again. Compare their features one by one.' },
+      cp4_q3: { label: 'A. A possible state change', explanation: 'Correct! A connection represents a possible transformation. The fish can move from one state to another.', wrong: 'Watch the fish when it moves. Think about what changes after following the connection.' },
+      cp4_q4: { label: 'A. It goes back again', explanation: 'Exactly! A reversible operation can undo itself. The state returns to its original form.', wrong: 'Try repeating the same operation. Observe what happens after the second move.' },
+      cp4_q5: { label: 'B. It connects new states', explanation: 'Great observation! A new feature expands the existing world. The original structure stays, and new states are added.', wrong: 'Think about how new levels are created. Look at what happens when a new feature appears.' },
+      cp4_q6: { label: 'A. The basic rules', explanation: 'Correct! More features create a larger world. However, the same transformation rules still apply.', wrong: 'Compare puzzles with different numbers of features. Notice what changes and what stays the same.' },
+      cp4_q7: { label: 'A. It changes many states together', explanation: 'Exactly! An Advanced Move applies a related operation to multiple states at once. This can reduce the number of moves.', wrong: 'Look carefully at the result after using an Advanced Move. Compare it with a normal move.' },
+      cp4_q8: { label: 'A. A sequence of operations', explanation: 'Correct! Each move represents an operation. Together, the moves describe how the state changes.', wrong: 'Look back at your solution path. Think about what each move represents.' },
+      cp4_q9: { label: 'B. Player B', explanation: 'Great! Both solutions reach the same goal. The solution with fewer moves uses fewer operations.', wrong: 'Compare the two solutions carefully. Think about what is different between them.' },
+      cp4_q10: { label: 'B. A circuit problem', explanation: 'Congratulations! You discovered the hidden idea of the puzzle world. The game combines states, transformations, reversible operations, and efficient solutions which are important in quantum reversible circuits.', wrong: 'Think about everything you explored in the game. What ideas did you use to solve the puzzles?' }
+    };
+    const popAudio = new Audio('pop.m4a');
+    const meowAudio = new Audio('meow.m4a');
+
+    function playPop() {
+      popAudio.currentTime = 0;
+      popAudio.play().catch(() => {});
+    }
+
+    document.addEventListener('click', event => {
+      if (event.target.closest('button, .answer-btn, .feature-btn, .step-dot, .toggle-edge, .checkpoint-line')) {
+        playPop();
+      }
+    }, true);
+
+    function renderCertificate() {
+      const user = getUser();
+      const nameEl = document.getElementById('certificate-name');
+      if (nameEl) nameEl.innerText = user;
+
+      const sealEl = document.getElementById('certificate-seal');
+      if (sealEl && !sealEl.src) sealEl.src = bakeSealImage(108);
+
+      const photoEl = document.getElementById('certificate-photo');
+      if (photoEl) {
+        const photo = sessionStorage.getItem('playerPhoto') || localStorage.getItem('playerPhoto');
+        if (photo) {
+          const photoX = parseInt(sessionStorage.getItem('playerPhotoX') || localStorage.getItem('playerPhotoX') || '50') || 50;
+          const photoY = parseInt(sessionStorage.getItem('playerPhotoY') || localStorage.getItem('playerPhotoY') || '50') || 50;
+          const rawScale = parseFloat(sessionStorage.getItem('playerPhotoScale') || localStorage.getItem('playerPhotoScale') || '1');
+          const photoScale = isNaN(rawScale) ? 1 : Math.min(2.5, Math.max(1, rawScale));
+
+          bakeCoverImage2({ src: photo, posX: photoX, posY: photoY, scale: photoScale, outSize: 264 }).then(baked => {
+            if (baked) {
+              photoEl.innerHTML = `<img src="${baked}" alt="Player photo" style="width:100%; height:100%; border-radius:50%; display:block;">`;
+            } else {
+              photoEl.innerHTML = `<img src="${photo}" alt="Player photo" style="width:100%; height:100%; object-fit:cover; object-position:${photoX}% ${photoY}%; transform-origin:${photoX}% ${photoY}%; transform:scale(${photoScale}); border-radius:50%;">`;
+            }
+          });
+        }
+      }
+
+      const listEl = document.getElementById('certificate-list');
+      if (listEl) {
+        listEl.innerHTML = STAR_KEYS.map(key => {
+          const title = (CHECKPOINTS[key].introTitle || CHECKPOINTS[key].title).replace(/\s*Certificate$/, '');
+          return `<div>${title}</div>`;
+        }).join('');
+      }
+
+      const scoreEl = document.getElementById('certificate-score');
+      if (scoreEl) {
+        const score = localStorage.getItem(`meow_cp4_score_${user}`) || sessionStorage.getItem('meow_cp4_score');
+        if (score) {
+          scoreEl.style.display = 'flex';
+          scoreEl.innerText = `Final Challenge Score: ${score} / 100`;
+        } else {
+          scoreEl.style.display = 'none';
+        }
+      }
+
+      const dateEl = document.getElementById('certificate-date');
+      if (dateEl) {
+        dateEl.innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+    }
+
+    function bakeSealImage(outSize) {
+      const canvas = document.createElement('canvas');
+      canvas.width = outSize;
+      canvas.height = outSize;
+      const ctx = canvas.getContext('2d');
+      const k = outSize / 64;
+      const gold = '#B8933C';
+      ctx.strokeStyle = gold;
+      ctx.fillStyle = gold;
+
+      ctx.lineWidth = 2 * k;
+      ctx.beginPath();
+      ctx.arc(32 * k, 32 * k, 26 * k, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.lineWidth = 1 * k;
+      ctx.beginPath();
+      ctx.arc(32 * k, 32 * k, 20 * k, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const starPoints = [
+        [32, 17], [35.8, 26.7], [46.3, 27.4], [38.2, 34], [40.8, 44.1],
+        [32, 38.5], [23.2, 44.1], [25.8, 34], [17.7, 27.4], [28.2, 26.7]
+      ];
+      ctx.beginPath();
+      starPoints.forEach(([x, y], i) => {
+        const px = x * k, py = y * k;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      });
+      ctx.closePath();
+      ctx.fill();
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function bakeCoverImage2({ src, posX, posY, scale, outSize }) {
+      return new Promise(resolve => {
+        if (!src) return resolve(null);
+        const px01 = (posX || 50) / 100;
+        const py01 = (posY || 50) / 100;
+        const s = isNaN(scale) ? 1 : scale;
+        const image = new Image();
+        image.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = outSize;
+            canvas.height = outSize;
+            const ctx = canvas.getContext('2d');
+            const iw = image.naturalWidth, ih = image.naturalHeight;
+            if (!iw || !ih) return resolve(null);
+            const coverScale = Math.max(outSize / iw, outSize / ih);
+            const drawW = iw * coverScale, drawH = ih * coverScale;
+            const dx = (outSize - drawW) * px01;
+            const dy = (outSize - drawH) * py01;
+            const cx = outSize * px01, cy = outSize * py01;
+            const dx2 = cx - (cx - dx) * s;
+            const dy2 = cy - (cy - dy) * s;
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(outSize / 2, outSize / 2, outSize / 2, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.drawImage(image, dx2, dy2, drawW * s, drawH * s);
+            ctx.restore();
+            resolve(canvas.toDataURL('image/png'));
+          } catch {
+            resolve(null);
+          }
+        };
+        image.onerror = () => resolve(null);
+        image.src = src;
+      });
+    }
+
+    async function downloadCertificate() {
+      const target = document.getElementById('certificate-box');
+      const btn = document.getElementById('certificate-download-btn');
+      if (!target || typeof html2canvas === 'undefined') return;
+      const originalText = btn ? btn.innerText : '';
+      if (btn) { btn.innerText = 'SAVING...'; btn.disabled = true; }
+
+      try {
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        const imgs = Array.from(target.querySelectorAll('img'));
+        await Promise.all(imgs.map(img => img.decode ? img.decode().catch(() => {}) : Promise.resolve()));
+
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const canvas = await html2canvas(target, {
+          backgroundColor: '#FBF8F0',
+          scale: 2,
+          useCORS: true,
+          onclone: async (clonedDoc) => {
+            if (clonedDoc.fonts && clonedDoc.fonts.ready) {
+              try { await clonedDoc.fonts.ready; } catch {}
+            }
+            
+            // --- 新增的修正程式碼開始 ---
+            const clonedScore = clonedDoc.getElementById('certificate-score');
+            if (clonedScore) {
+              // 1. 取消自動垂直置中，強制讓文字先貼齊頂部
+              clonedScore.style.alignItems = 'flex-start';
+              // 2. 透過給予明確的上方內距，手動把文字推到正中間
+              // (總高度 46px，字體大約 20px。設定 9px ~ 11px 通常是視覺最準的位置)
+              clonedScore.style.paddingTop = '-10px'; 
+            }
+            // --- 新增的修正程式碼結束 ---
+          }
+        });
+        const link = document.createElement('a');
+        const user = getUser().replace(/[^a-z0-9-_]+/gi, '_') || 'player';
+        link.download = `${user}-meowtopia-certificate.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch {
+        alert('Download failed. Please try again.');
+      } finally {
+        if (btn) { btn.innerText = originalText || 'DOWNLOAD'; btn.disabled = false; }
+      }
+    }
+
+    function init() {
+      const params = new URLSearchParams(location.search);
+      state.checkpointId = params.get('id') || 'cp1';
+      updateStarMeter();
+
+      if (params.get('certificate') === '1') {
+        const user = getUser();
+        const cp4Score = parseInt(localStorage.getItem(`meow_cp4_score_${user}`) || sessionStorage.getItem('meow_cp4_score') || '0', 10);
+        const passedFinalChallenge = cp4Score >= 90;
+        if (passedFinalChallenge && STAR_KEYS.every(key => readStars()[key])) {
+          localStorage.setItem(`meow_certificate_earned_${user}`, 'true');
+          sessionStorage.setItem(`meow_certificate_earned_${user}`, 'true');
+          document.getElementById('checkpoint-content').style.display = 'none';
+          document.getElementById('certificate-content').classList.add('show');
+          document.getElementById('checkpoint-label').innerText = 'Certificate';
+          renderCertificate();
+        } else location.href = 'checkpoint.html?id=cp4';
+        return;
+      }
+
+      if (!CHECKPOINTS[state.checkpointId]) state.checkpointId = 'cp1';
+      const cp = CHECKPOINTS[state.checkpointId];
+      renderIntro(cp);
+      if (state.checkpointId === 'cp1') renderCP1();
+      if (state.checkpointId === 'cp2') renderCP2();
+      if (state.checkpointId === 'cp3') renderCP3();
+      if (state.checkpointId === 'cp4') renderCP4();
+
+      document.getElementById('complete-btn').onclick = completeCheckpoint;
+      document.getElementById('reward-next').onclick = () => location.href = cp.next;
+
+      window.addEventListener('resize', () => {
+        if (document.getElementById('cp3-anim-board')) centerCP3Graph();
+        if (document.getElementById('cp4-bit-stage')) {
+          const activeBtn = document.querySelector('.cp4-bit-btn.active');
+          renderCP4BitStage(activeBtn ? parseInt(activeBtn.dataset.bits, 10) : 1);
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
